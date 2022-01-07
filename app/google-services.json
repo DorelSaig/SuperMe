@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "568642859431",
+    "project_id": "superme-e69d5",
+    "storage_bucket": "superme-e69d5.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:568642859431:android:3c1124076e6e6a82b24682",
+        "android_client_info": {
+          "package_name": "com.DorelSaig.superme"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "568642859431-f05e97h0ukql14ivbujtpk8bdve72oao.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCXNsgJU7aOu4UBh71blKWO50h1IIHeuaw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "568642859431-f05e97h0ukql14ivbujtpk8bdve72oao.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

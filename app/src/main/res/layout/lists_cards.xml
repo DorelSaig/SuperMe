@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:cardCornerRadius="20dp"
+    android:elevation="10dp"
+    app:cardElevation="10dp"
+    android:layout_margin="10dp"
+    android:backgroundTint="@color/white">
+
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/list_IMG_image"
+            android:layout_width="match_parent"
+            android:layout_height="115dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ic_launcher_background" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/list_LBL_title"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:ellipsize="end"
+            android:fontFamily="@font/amatica_sc_bold"
+            android:textColor="#000000"
+            android:gravity="center"
+            android:maxLines="2"
+            android:minLines="2"
+            android:text="שם_רשימה"
+            android:textSize="30sp" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/list_LBL_counter"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:ellipsize="end"
+            android:fontFamily="@font/rubik"
+            android:gravity="center"
+            android:maxLines="2"
+            android:minLines="2"
+            android:text="מספר_פריטים"
+            android:textColor="#C4C4C4"
+            android:textSize="17sp" />
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+</com.google.android.material.card.MaterialCardView>

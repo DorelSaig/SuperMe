@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layoutDirection="rtl"
+    android:background="@color/main_background"
+    tools:context=".Activities.LoginActivity">
+
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/panel_IMG_logo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="50dp"
+        android:src="@drawable/logo_superme" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/panel_BTN_login"
+        android:layout_width="wrap_content"
+        android:layout_height="60dp"
+        android:layout_below="@id/panel_IMG_logo"
+        android:layout_centerInParent="true"
+        android:layout_marginTop="20dp"
+        android:backgroundTint="@color/main_green"
+        android:elevation="10dp"
+        android:fontFamily="@font/rubik"
+        android:text="כניסה באמצעות טלפון"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:elevation="10dp"
+        app:icon="@drawable/ic_login_phone" />
+
+    <com.airbnb.lottie.LottieAnimationView
+        android:layout_width="250dp"
+        android:layout_height="250dp"
+        android:layout_below="@id/panel_BTN_login"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp"
+        app:lottie_autoPlay="true"
+        app:lottie_loop="true"
+        app:lottie_rawRes="@raw/anim_myapp"
+        app:lottie_speed="0.5" />
+    
+
+</RelativeLayout>
