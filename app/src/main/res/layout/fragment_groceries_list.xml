@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/fragment_LAY_frame"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layoutDirection="rtl"
+    android:background="@color/main_background"
+    tools:context=".Fragments.HomeListsFragment">
+
+    <RelativeLayout
+        android:id="@+id/fragment_LAY_empty"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/fragment_TXT_1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_above="@id/fragment_TXT_2"
+            android:text="חסר משהו?"
+            android:fontFamily="@font/amatica_sc_bold"
+            android:textSize="60sp"
+            android:textColor="@color/main_buttons_on_main_green"/>
+
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/fragment_TXT_2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_above="@id/fragment_IMG_empty"
+            android:text="תתחילו להוסיף מוצרים, שלא תשכחו"
+            android:fontFamily="@font/amatica_sc_bold"
+            android:textSize="20sp"
+            android:textColor="@color/black"/>
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/fragment_IMG_empty"
+            android:layout_width="300dp"
+            android:layout_height="300dp"
+            android:layout_centerInParent="true"
+            android:src="@drawable/img_empty_cart"/>
+
+    </RelativeLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/fragment_RECYC_items"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="20dp"
+        android:clipToPadding="false"
+        android:paddingBottom="57dp"
+        />
+
+
+
+</FrameLayout>

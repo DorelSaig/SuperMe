@@ -1,7 +1,7 @@
 package com.DorelSaig.superme;
 
-import com.DorelSaig.superme.Objects.List;
+import com.DorelSaig.superme.Objects.MyList;
 
 public interface ListItemClickListener {
-    void listItemClicked(List list, int position);
+    void listItemClicked(MyList myList, int position);
 }

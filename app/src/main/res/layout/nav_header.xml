@@ -2,14 +2,14 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="200dp"
-    android:background="#A2B8A0"
+    android:layout_height="250dp"
+    android:background="@color/my_primary"
     android:fitsSystemWindows="true"
     android:layoutDirection="rtl">
 
     <FrameLayout
         android:id="@+id/profile_FRM_nav"
-        android:layout_width="wrap_content"
+        android:layout_width="150dp"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:orientation="vertical" >
@@ -25,36 +25,64 @@
         android:id="@+id/navigation_header_container_FAB_profile_pic"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:fabCustomSize="25dp"
+        app:fabCustomSize="30dp"
         app:useCompatPadding="false"
         android:backgroundTint="@color/main_buttons_on_main_green"
-        app:srcCompat="@drawable/ic_baseline_add"
+        app:srcCompat="@drawable/ic_baseline_edit"
         app:tint="@color/white"
+
         app:elevation="8dp"
         android:layout_gravity="right|bottom"
-        />
+        android:contentDescription="@string/todo" />
 
-    <com.airbnb.lottie.LottieAnimationView
-        android:id="@+id/animationView"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:layout_gravity="center"
-        app:lottie_rawRes="@raw/anim_profile_pic"
-        app:lottie_autoPlay="true"
-        app:lottie_speed="0.5"
-        app:lottie_loop="true"/>
+
+
+<!--    <com.airbnb.lottie.LottieAnimationView-->
+<!--        android:id="@+id/animationView"-->
+<!--        android:layout_width="100dp"-->
+<!--        android:layout_height="100dp"-->
+<!--        android:layout_gravity="center"-->
+<!--        app:lottie_rawRes="@raw/anim_profile_pic"-->
+<!--        app:lottie_autoPlay="true"-->
+<!--        app:lottie_speed="0.5"-->
+<!--        app:lottie_loop="true"/>-->
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/header_IMG_user"
+            android:layout_width="130dp"
+            android:layout_height="130dp"
+            android:layout_gravity="center_horizontal"
+            android:src="@drawable/img_profile_pic"
+            android:scaleType="centerCrop"
+            app:civ_border_width="3dp"
+            app:civ_border_color="#B2000000"
+            android:clickable="true"
+            />
+
+
+        <com.google.android.material.progressindicator.CircularProgressIndicator
+            android:id="@+id/header_BAR_progress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:indeterminate="true"
+            android:layout_gravity="center"
+            android:visibility="invisible"
+            app:indicatorColor="@color/main_buttons_green"
+            />
 
     </FrameLayout>
 
 
     <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/header_TXT_username"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingTop="8dp"
         android:layout_below="@+id/profile_FRM_nav"
         android:layout_centerHorizontal="true"
+        android:paddingTop="8dp"
         android:text="My Name Is"
         android:textAlignment="center"
-        android:textSize="18sp"
-        android:textAppearance="@style/TextAppearance.AppCompat.Body2"/>
+        android:textStyle="bold"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+        android:textSize="18sp" />
 </RelativeLayout>

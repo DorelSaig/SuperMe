@@ -6,44 +6,66 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layoutDirection="rtl"
-    tools:context="com.DorelSaig.superme.Activities.MyListsActivity">
+    tools:context="com.DorelSaig.superme.Activities.MainActivity">
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/main_background"
         android:fitsSystemWindows="true"
-        android:animateLayoutChanges="true">
+        android:animateLayoutChanges="true"
+        >
 
 
         <com.google.android.material.appbar.AppBarLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:fitsSystemWindows="true">
+            app:liftOnScroll="true"
+            >
 
             <com.google.android.material.appbar.MaterialToolbar
                 android:id="@+id/panel_Toolbar_Top"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 android:background="@color/main_green"
-                app:layout_scrollFlags="scroll|enterAlways"
+                app:layout_scrollFlags="scroll|enterAlways|snap"
+
                 app:navigationIcon="@drawable/ic_headline_arrow_back"
                 app:navigationIconTint="@color/white"
                 app:title="הרשימות שלי"
                 app:titleCentered="true"
-                app:titleTextColor="@color/white" />
+                app:titleTextColor="@color/white"
+                />
 
 
         </com.google.android.material.appbar.AppBarLayout>
 
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/main_LST_lists"
+
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/main_FRG_container"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginBottom="20dp"
+            android:layout_marginBottom="0dp"
             android:clipToPadding="false"
-            android:paddingBottom="57dp" />
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
+
+            />
+
+<!--        <androidx.recyclerview.widget.RecyclerView-->
+<!--            android:id="@+id/main_LST_lists"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="match_parent"-->
+
+<!--            android:layout_marginBottom="20dp"-->
+<!--            android:clipToPadding="false"-->
+<!--            android:paddingBottom="57dp" />-->
+
+<!--        <FrameLayout-->
+<!--            android:id="@+id/main_FRL_container"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="match_parent"-->
+<!--            android:layout_marginBottom="20dp"/>-->
 
         <RelativeLayout
             android:id="@+id/panel_VIEW_message"
@@ -54,7 +76,7 @@
             android:layout_marginBottom="15dp"
             android:paddingBottom="100dp"
             android:clickable="true"
-            android:visibility="visible"
+            android:visibility="invisible"
 
             >
 
@@ -186,10 +208,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:backgroundTint="@color/main_green"
+
             android:src="@drawable/ic_baseline_add"
             app:borderWidth="0dp"
             app:layout_anchor="@id/panel_AppBar_bottom"
-            app:maxImageSize="35dp"
+            app:maxImageSize="45dp"
             app:tint="@color/white" />
 
 

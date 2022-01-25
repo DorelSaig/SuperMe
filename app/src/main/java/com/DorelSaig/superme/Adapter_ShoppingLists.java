@@ -1,6 +1,6 @@
 package com.DorelSaig.superme;
 
-import android.app.Activity;
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,7 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatImageView;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.DorelSaig.superme.Objects.List;
+import com.DorelSaig.superme.Objects.MyList;
 import com.bumptech.glide.Glide;
 import com.google.android.material.textview.MaterialTextView;
 
@@ -17,11 +17,11 @@ import java.util.ArrayList;
 
 public class Adapter_ShoppingLists extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    private Activity activity;
-    private ArrayList<List> lists = new ArrayList<>();
+    private Context activity;
+    private ArrayList<MyList> lists = new ArrayList<>();
     private ListItemClickListener listItemClickListener;
 
-    public Adapter_ShoppingLists(Activity activity, ArrayList<List> lists) {
+    public Adapter_ShoppingLists(Context activity, ArrayList<MyList> lists) {
         this.activity = activity;
         this.lists = lists;
     }
@@ -41,14 +41,14 @@ public class Adapter_ShoppingLists extends RecyclerView.Adapter<RecyclerView.Vie
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         ListViewHolder listViewHolder = (ListViewHolder) holder;
-        List list = getItem(position);
+        MyList myList = getItem(position);
 
-        listViewHolder.list_LBL_title.setText(list.getTitle());
-        listViewHolder.list_LBL_counter.setText(list.getItems_Counter() + " פריטים");
+        listViewHolder.list_LBL_title.setText(myList.getTitle());
+        listViewHolder.list_LBL_counter.setText(myList.getItems_Counter() + " פריטים");
 
         Glide
                 .with(activity)
-                .load(list.getImage())
+                .load(myList.getImage_cover())
                 .into(listViewHolder.list_IMG_image);
     }
 
@@ -57,7 +57,7 @@ public class Adapter_ShoppingLists extends RecyclerView.Adapter<RecyclerView.Vie
         return lists.size();
     }
 
-    private List getItem(int position){
+    private MyList getItem(int position){
         return lists.get(position);
     }
 

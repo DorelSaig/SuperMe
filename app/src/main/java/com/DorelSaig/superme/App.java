@@ -2,7 +2,7 @@ package com.DorelSaig.superme;
 
 import android.app.Application;
 
-import com.DorelSaig.superme.Firebase.User_DataManager;
+import com.DorelSaig.superme.Firebase.MyDataManager;
 
 public class App extends Application {
     @Override
@@ -12,6 +12,6 @@ public class App extends Application {
 
 
         //Initiate FireBase Managers
-        User_DataManager.initHelper();
+        MyDataManager.initHelper();
     }
 }

@@ -16,6 +16,16 @@
     <color name="main_swipe_yellow">#DA9F27</color>
 
 
+    <color name="my_primary_variant">#B1BDA0</color>
+    <color name="my_primary">#B1BDA0</color>
+    <color name="my_on_primary_">#FF000000</color>
+    <color name="my_secondary">#73FF28</color>
+    <color name="my_secondary_variant">#73FF28</color>
+    <color name="my_on_secondary_">#FF000000</color>
+
+
+
+
 
 
 </resources>

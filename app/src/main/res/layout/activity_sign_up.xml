@@ -4,70 +4,102 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layoutDirection="rtl"
     android:background="@color/main_background"
+    android:layoutDirection="rtl"
     tools:context=".Activities.SignUpActivity">
 
-    <com.google.android.material.imageview.ShapeableImageView
-        android:id="@+id/panel_IMG_logo"
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="50dp"
-        android:src="@drawable/logo_superme" />
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/form_EDT_name"
-        android:layout_width="250dp"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_below="@id/panel_IMG_logo"
-        app:boxBackgroundMode="outline"
-        app:errorEnabled="true"
-        android:hint="שם מלא">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="16sp"
-            android:inputType="textPersonName"
-            />
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/form_EDT_base"
-        android:layout_width="250dp"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_below="@id/panel_IMG_logo"
-        app:boxBackgroundMode="outline"
-        app:errorEnabled="true"
-        android:hint="שם מלא">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="16sp"
-            android:inputType="textPersonName"
-            />
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/panel_BTN_login"
-        android:layout_width="wrap_content"
-        android:layout_height="60dp"
         android:layout_centerInParent="true"
-        android:layout_marginBottom="20dp"
-        android:layout_alignParentBottom="true"
-        android:backgroundTint="@color/main_green"
-        android:elevation="10dp"
-        android:fontFamily="@font/rubik"
-        android:text="עדכן"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        app:elevation="10dp"
-        app:icon="@drawable/ic_baseline_save" />
+        android:orientation="vertical">
 
+
+        <FrameLayout
+            android:id="@+id/profile_FRM_nav"
+            android:layout_width="160dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="20dp"
+            android:orientation="vertical">
+
+            <!--    <com.google.android.material.imageview.ShapeableImageView-->
+            <!--        android:id="@+id/drawer_IMG_myprofile"-->
+            <!--        android:layout_width="wrap_content"-->
+            <!--        android:layout_height="wrap_content"-->
+            <!--        android:src="@mipmap/ic_launcher"-->
+            <!--        />-->
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/signup_FAB_profile_pic"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right|bottom"
+                android:backgroundTint="@color/main_buttons_on_main_green"
+                app:elevation="8dp"
+                app:fabCustomSize="40dp"
+                app:srcCompat="@drawable/ic_baseline_add"
+                app:tint="@color/white"
+                app:borderWidth="2dp"
+                app:useCompatPadding="false" />
+
+<!--            <com.airbnb.lottie.LottieAnimationView-->
+<!--                android:id="@+id/animationView"-->
+<!--                android:layout_width="150dp"-->
+<!--                android:layout_height="150dp"-->
+<!--                android:layout_gravity="center_horizontal"-->
+<!--                android:layout_marginBottom="20dp"-->
+<!--                app:lottie_autoPlay="true"-->
+<!--                app:lottie_loop="true"-->
+<!--                app:lottie_rawRes="@raw/anim_profile_pic"-->
+<!--                app:lottie_speed="0.5" />-->
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/signup_IMG_user"
+                android:layout_width="150dp"
+                android:layout_height="150dp"
+                android:layout_gravity="center_horizontal"
+                android:clickable="true"
+                android:scaleType="centerCrop"
+                android:src="@drawable/img_profile_pic"
+                app:civ_border_color="#B2000000"
+                app:civ_border_width="3dp"
+                android:focusable="true" />
+        </FrameLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/form_EDT_name"
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
+            android:hint="שם מלא"
+            app:boxBackgroundMode="outline"
+            app:errorEnabled="true">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPersonName"
+                android:textSize="16sp" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/panel_BTN_update"
+            android:layout_width="wrap_content"
+            android:layout_height="60dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="20dp"
+            android:backgroundTint="@color/main_green"
+            android:elevation="8dp"
+            app:strokeColor="@color/cardview_shadow_start_color"
+            app:strokeWidth="1dp"
+            android:fontFamily="@font/rubik"
+            android:text="עדכן"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            app:elevation="10dp"
+            app:icon="@drawable/ic_baseline_save" />
+
+    </LinearLayout>
 
 
 </RelativeLayout>
