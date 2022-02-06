@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layoutDirection="rtl"
+
+    tools:context=".Fragments.MyItemsFragment">
+
+    <RelativeLayout
+        android:id="@+id/fragment_LAY_myItems_empty"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="visible">
+
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/fragment_TXT_2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:layout_centerHorizontal="true"
+            android:text="המוצרים שתמציא, יופיעו פה"
+            android:fontFamily="@font/amatica_sc_bold"
+            android:textSize="20sp"
+            android:textColor="@color/black"/>
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/fragment_IMG_myItemsempty"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:layout_below="@id/fragment_TXT_2"
+            android:layout_centerHorizontal="true"
+            android:src="@drawable/img_empty_cart"/>
+
+    </RelativeLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/fragment_RECYC_myItems"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="20dp"
+        android:clipToPadding="false"
+
+        />
+
+
+
+</FrameLayout>
+

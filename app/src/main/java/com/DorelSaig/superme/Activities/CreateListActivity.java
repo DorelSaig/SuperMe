@@ -41,21 +41,27 @@ public class CreateListActivity extends AppCompatActivity {
     private MaterialButton panel_BTN_create;
     private CircularProgressIndicator createList_BAR_progress;
 
-    private MyDataManager dataManager = MyDataManager.getInstance();
+    private final MyDataManager dataManager = MyDataManager.getInstance();
     private FirebaseFirestore db;
-    private MyUser currentUser = MyDataManager.getInstance().getCurrentUser();
+    private final MyUser currentUser = MyDataManager.getInstance().getCurrentUser();
 
     private MyList tempList;
+    private StorageReference userRef;
+
+    private boolean isSubmit;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_list);
 
+        isSubmit = false;
+
         findViews();
         initButtons();
 
         tempList = new MyList("No Title", currentUser.getUid());
+        userRef = dataManager.getStorage().getReference().child("lists_covers").child(tempList.getListUid());
 
         db = dataManager.getDbFireStore();
 
@@ -82,12 +88,28 @@ public class CreateListActivity extends AppCompatActivity {
             public void onClick(View v) {
                 String theTitle = form_EDT_name.getEditText().getText().toString();
                 tempList.setTitle(theTitle);
-                currentUser.getMyListsUids().add(tempList.getListUid());
-                dataManager.userListsChange();
+                currentUser.addToListUid(tempList.getListUid());
+                dataManager.userListsChange(tempList.getListUid());
 
                 storeListInDB(tempList);
+                isSubmit = true;
             }
         });
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+        if(!isSubmit){
+            userRef.delete().addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Log.d("pttt", "onFailure: "+ e.getMessage());
+                }
+            });
+        }
+
     }
 
     private void choseCover() {
@@ -95,10 +117,10 @@ public class CreateListActivity extends AppCompatActivity {
                 .crop()	    			//Crop image(Optional), Check Customization for more option
                 .compress(1024)			//Final image size will be less than 1 MB(Optional)
                 .crop(2f, 1f)
-                .maxResultSize(1080, 1080)
-                //Final image resolution will be less than 1080 x 1080(Optional)
+                .maxResultSize(1080, 1080)    //Final image resolution will be less than 1080 x 1080(Optional)
                 .start();
     }
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
@@ -106,7 +128,8 @@ public class CreateListActivity extends AppCompatActivity {
 
         createList_BAR_progress.setVisibility(View.VISIBLE);
         panel_BTN_create.setEnabled(false);
-        StorageReference userRef = dataManager.getStorage().getReference().child("lists_covers").child(tempList.getListUid());
+
+
 
         Uri uri = data.getData();
         createList_IMG_user.setImageURI(uri);
@@ -137,32 +160,13 @@ public class CreateListActivity extends AppCompatActivity {
                         }
                     });
 
-
-
                 } else {
                     String message = task.getException().getMessage();
                     Toast.makeText(CreateListActivity.this, "Error: " + message, Toast.LENGTH_SHORT).show();
                 }
             }
         });
-//        uploadTask.addOnFailureListener(new OnFailureListener() {
-//            @Override
-//            public void onFailure(@NonNull Exception exception) {
-//                // Handle unsuccessful uploads
-//            }
-//        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-//            @Override
-//            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-//                // taskSnapshot.getMetadata() contains file metadata such as size, content-type, etc.
-//                // ...
-//
-//                header_BAR_progress.setVisibility(View.INVISIBLE);
-//                Glide.with(MainActivity.this)
-//                        .load(bytes)
-//                        .into(header_IMG_user);
-//
-//            }
-//        });
+
         // [END upload_memory]
     }
 

@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="55dp"
-    app:cardCornerRadius="20dp"
+    app:cardCornerRadius="10dp"
     android:elevation="10dp"
     app:cardElevation="10dp"
     android:layout_margin="10dp"
@@ -42,7 +42,7 @@
             android:gravity="start|center_vertical"
             android:maxLines="2"
             android:minLines="2"
-            android:text="שם_רשימה"
+            android:text="@string/list_name"
             android:textColor="#FFFFFF"
             android:textSize="40sp" />
 
@@ -57,7 +57,7 @@
             android:gravity="end|center_vertical"
             android:maxLines="2"
             android:minLines="2"
-            android:text="יח'"
+            android:text="@string/ones"
             android:textColor="#FFFFFF"
             android:textSize="17sp" />
 

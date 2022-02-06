@@ -2,4 +2,5 @@
 <resources>
     <string name="app_name">SuperMe</string>
     <string name="list_name">שם רשימה</string>
+    <string name="add">הוסף</string>
 </resources>

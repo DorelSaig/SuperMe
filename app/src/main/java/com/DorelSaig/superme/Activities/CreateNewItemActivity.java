@@ -56,17 +56,38 @@ public class CreateNewItemActivity extends AppCompatActivity {
     private MaterialButton createItem_TGBTN_kilo;
 
     private MyItem tempItem;
+    private StorageReference userRef;
+
+    private boolean isSubmit;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_new_item);
 
+        isSubmit = false;
+
         findViews();
         configEditFields();
         initButtons();
 
         tempItem = new MyItem("No Title", 0, U_Manager.getCurrentListUid());
+        userRef = U_Manager.getStorage().getReference().child("items_image").child(tempItem.getItemUid());
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+        if(!isSubmit){
+            userRef.delete().addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Log.d("pttt", "onFailure: "+ e.getMessage());
+                }
+            });
+        }
+
     }
 
     private void configEditFields() {
@@ -98,7 +119,7 @@ public class CreateNewItemActivity extends AppCompatActivity {
 
         createItem_BAR_progress.setVisibility(View.VISIBLE);
         createItem_BTN_create.setEnabled(false);
-        StorageReference userRef = U_Manager.getStorage().getReference().child("items_image").child(tempItem.getItemUid());
+
 
         Uri uri = data.getData();
         createItem_IMG_user.setImageURI(uri);
@@ -128,9 +149,6 @@ public class CreateNewItemActivity extends AppCompatActivity {
 
                         }
                     });
-
-
-
                 } else {
                     String message = task.getException().getMessage();
                     Toast.makeText(CreateNewItemActivity.this, "Error: " + message, Toast.LENGTH_SHORT).show();
@@ -152,7 +170,6 @@ public class CreateNewItemActivity extends AppCompatActivity {
                     public void onSuccess(Void unused) {
                         Log.d("pttt", "DocumentSnapshot Successfully written!");
                         //startActivity(new Intent(CreateListActivity.this, MainActivity.class));
-                        finish();
                     }
 
                 })
@@ -162,6 +179,27 @@ public class CreateNewItemActivity extends AppCompatActivity {
                         Log.w("pttt", "Error adding document", e);
                     }
                 });
+
+        db.collection("users")
+                .document(currentUser.getUid())
+                .collection("myItems")
+                .document(itemToStore.getItemUid())
+                .set(itemToStore)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void unused) {
+                        Log.d("pttt", "DocumentSnapshot Successfully written!");
+                        //startActivity(new Intent(CreateListActivity.this, MainActivity.class));
+                        finish();
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w("pttt", "Error adding document", e);
+                    }
+                });
+
     }
 
 
@@ -176,7 +214,6 @@ public class CreateNewItemActivity extends AppCompatActivity {
         createItem_IMG_user.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 choseCover();
             }
         });
@@ -193,6 +230,7 @@ public class CreateNewItemActivity extends AppCompatActivity {
 
 
                 storeItemInDB(tempItem);
+                isSubmit = true;
             }
         });
 
@@ -203,7 +241,7 @@ public class CreateNewItemActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if(createItem_TGBTN_kilo.isChecked()) {
-                    createItem_EDT_amount.setSuffixText("קילו");
+                    createItem_EDT_amount.setSuffixText(getString(R.string.kilos));
                     createItem_EDT_amount.getEditText().setInputType(InputType.TYPE_NUMBER_FLAG_DECIMAL | InputType.TYPE_CLASS_NUMBER);
                 }
             }
@@ -213,7 +251,7 @@ public class CreateNewItemActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if(createItem_TGBTN_ones.isChecked()) {
-                    createItem_EDT_amount.setSuffixText("יח");
+                    createItem_EDT_amount.setSuffixText(getString(R.string.ones));
                     createItem_EDT_amount.getEditText().setInputType(InputType.TYPE_CLASS_NUMBER);
                 }
             }

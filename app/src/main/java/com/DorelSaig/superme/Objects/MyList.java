@@ -63,4 +63,13 @@ public class MyList {
     public ArrayList<String> getItemsUid() {
         return itemsUid;
     }
+
+    public ArrayList<String> getSharedWithUidsList() {
+        return sharedWithUidsList;
+    }
+
+    public MyList setSharedWithUidsList(ArrayList<String> sharedWithUidsList) {
+        this.sharedWithUidsList = sharedWithUidsList;
+        return this;
+    }
 }

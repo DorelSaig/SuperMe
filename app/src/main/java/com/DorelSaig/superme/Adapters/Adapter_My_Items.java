@@ -1,6 +1,8 @@
-package com.DorelSaig.superme;
+package com.DorelSaig.superme.Adapters;
 
 import android.content.Context;
+import android.net.Uri;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,47 +11,58 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatImageView;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.DorelSaig.superme.ItemsClickListener;
 import com.DorelSaig.superme.Objects.MyItem;
+import com.DorelSaig.superme.R;
 import com.bumptech.glide.Glide;
 import com.google.android.material.textview.MaterialTextView;
 
 import java.util.ArrayList;
 
-public class Adapter_Items extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class Adapter_My_Items extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private Context activity;
-    private ArrayList<MyItem> items = new ArrayList<>();
+    private ArrayList<MyItem> items;
     private ItemsClickListener itemsClickListener;
 
-    public Adapter_Items(Context activity, ArrayList<MyItem> items) {
+    public Adapter_My_Items(Context activity, ArrayList<MyItem> items) {
         this.activity = activity;
         this.items = items;
     }
 
-    public Adapter_Items setItemClickListener(ItemsClickListener itemsClickListener) {
+    public Adapter_My_Items setItemClickListener(ItemsClickListener itemsClickListener) {
         this.itemsClickListener = itemsClickListener;
         return this;
     }
 
+
+
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_cards, parent, false);
-        return new ListViewHolder(view);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.my_item_cards, parent, false);
+        return new ItemViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-        ListViewHolder listViewHolder = (ListViewHolder) holder;
+        ItemViewHolder itemViewHolder = (ItemViewHolder) holder;
         MyItem item = getItem(position);
-
-        listViewHolder.item_LBL_title.setText(item.getItemTitle());
-        listViewHolder.item_LBL_amount.setText(String.format("%s %s", item.getAmount(), item.getAmountSuffix()));
+        itemViewHolder.myItem_LBL_title.setText(item.getItemTitle());
 
         Glide
                 .with(activity)
-                .load(item.getItemIcon())
-                .into(listViewHolder.item_IMG_icon);
+                .load(Uri.parse(item.getItemImage()))
+                .into(itemViewHolder.myItem_IMG_image);
+
+
+
+        //itemViewHolder.myItem_IMG_image.setImageURI(Uri.parse(item.getItemImage()));
+
+        Log.d("pttt", item.getItemImage());
+
+
+
     }
 
     @Override
@@ -61,20 +74,16 @@ public class Adapter_Items extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         return items.get(position);
     }
 
+    private class ItemViewHolder extends RecyclerView.ViewHolder {
+
+        public AppCompatImageView myItem_IMG_image;
+        public MaterialTextView myItem_LBL_title;
 
 
-
-    private class ListViewHolder extends RecyclerView.ViewHolder {
-
-        public AppCompatImageView item_IMG_icon;
-        public MaterialTextView item_LBL_title;
-        public MaterialTextView item_LBL_amount;
-
-        public ListViewHolder(View itemView) {
+        public ItemViewHolder(View itemView) {
             super(itemView);
-            this.item_IMG_icon = itemView.findViewById(R.id.item_IMG_icon);
-            this.item_LBL_title = itemView.findViewById(R.id.item_LBL_title);
-            this.item_LBL_amount = itemView.findViewById(R.id.item_LBL_amount);
+            this.myItem_IMG_image = itemView.findViewById(R.id.myItem_IMG_image);
+            this.myItem_LBL_title = itemView.findViewById(R.id.myItem_LBL_title);
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -85,5 +94,7 @@ public class Adapter_Items extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
         }
     }
-}
 
+
+
+}

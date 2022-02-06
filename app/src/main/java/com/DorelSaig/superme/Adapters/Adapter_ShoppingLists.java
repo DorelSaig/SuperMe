@@ -1,4 +1,4 @@
-package com.DorelSaig.superme;
+package com.DorelSaig.superme.Adapters;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -9,7 +9,9 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatImageView;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.DorelSaig.superme.ListItemClickListener;
 import com.DorelSaig.superme.Objects.MyList;
+import com.DorelSaig.superme.R;
 import com.bumptech.glide.Glide;
 import com.google.android.material.textview.MaterialTextView;
 
@@ -83,7 +85,17 @@ public class Adapter_ShoppingLists extends RecyclerView.Adapter<RecyclerView.Vie
                 }
             });
 
+            itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    listItemClickListener.listItemLongClick(getItem(getAdapterPosition()), getAdapterPosition());
+                    return true;
+                }
+            });
+
         }
+
+
     }
 }
 

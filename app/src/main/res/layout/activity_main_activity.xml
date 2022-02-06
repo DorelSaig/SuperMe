@@ -29,12 +29,14 @@
                 android:layout_height="?attr/actionBarSize"
                 android:background="@color/main_green"
                 app:layout_scrollFlags="scroll|enterAlways|snap"
-
+                app:titleTextAppearance="@style/ToolBar.MyTextAppearance"
                 app:navigationIcon="@drawable/ic_headline_arrow_back"
                 app:navigationIconTint="@color/white"
                 app:title="הרשימות שלי"
                 app:titleCentered="true"
                 app:titleTextColor="@color/white"
+                app:menu="@menu/top_app_bar_menu"
+
                 />
 
 
@@ -134,6 +136,7 @@
                 android:padding="5dp">
 
                 <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+                    android:id="@+id/message_BTN_going_out"
                     android:layout_width="350dp"
                     android:layout_height="0dp"
                     android:layout_marginTop="20dp"
@@ -145,12 +148,13 @@
                     android:insetTop="5dp"
                     android:insetRight="5dp"
                     android:insetBottom="5dp"
-                    android:text="יוצא לקניות"
+                    android:text="@string/going_shopping"
                     android:textAlignment="center"
                     android:textSize="40sp"
                     app:elevation="5dp" />
 
                 <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+                    android:id="@+id/message_BTN_list_update"
                     android:layout_width="350dp"
                     android:layout_height="0dp"
                     android:layout_marginTop="20dp"
@@ -162,12 +166,13 @@
                     android:insetTop="5dp"
                     android:insetRight="5dp"
                     android:insetBottom="5dp"
-                    android:text="הרשימה עודכנה"
+                    android:text="@string/list_updated"
                     android:textAlignment="center"
                     android:textSize="40sp"
                     app:elevation="5dp" />
 
                 <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+                    android:id="@+id/message_BTN_list_close"
                     android:layout_width="350dp"
                     android:layout_height="0dp"
                     android:layout_marginTop="20dp"
@@ -179,7 +184,7 @@
                     android:insetTop="5dp"
                     android:insetRight="5dp"
                     android:insetBottom="5dp"
-                    android:text="הרשימה סגורה"
+                    android:text="@string/shopping_done"
                     android:textAlignment="center"
                     android:textSize="40sp"
                     app:elevation="5dp" />

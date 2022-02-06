@@ -1,7 +1,37 @@
 <resources>
     <string name="app_name">SuperMe</string>
-    <string name="list_name">List Name</string>
+    <string name="slogan">Got It?</string>
     <string name="todo">TODO</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <!--    Buttons-->
+    <string name="phone_login">כניסה באמצעות טלפון</string>
+    <string name="add">הוסף</string>
+    <string name="search">חפש</string>
+    <string name="share">שיתוף</string>
+    <string name="ones">יח\'</string>
+    <string name="kilos">קילו</string>
+    <string name="example_phone_number">0501234567</string>
+    <string name="update">עדכן</string>
+    <string name="cancel">בטל</string>
+    <string name="logout">התנתק</string>
+
+    <!--    Hints-->
+    <string name="insert_full_name">הכנס שם מלא</string>
+    <string name="insert_list_title">הכנס שם רשימה</string>
+    <string name="insert_amount">הכנס כמות</string>
+    <string name="insert_phone_number">הכנס מספר טלפון</string>
+    <string name="insert_item_title">הכנס שם מוצר</string>
+    <string name="notes">הערות</string>
+
+    <!--    Messages-->
+    <string name="going_shopping">יוצא לקניות</string>
+    <string name="list_updated">הרשימה עודכנה</string>
+    <string name="shopping_done">הקניות בוצעו</string>
+
+    <!--    PlaceHolders-->
+    <string name="items_amount">מספר_פריטים</string>
+    <string name="item_name">שם_מוצר</string>
+    <string name="list_name">שם רשימה</string>
+    <string name="insert_category_title">הכנס שם קטגוריה</string>
+
 </resources>

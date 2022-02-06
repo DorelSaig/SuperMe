@@ -71,7 +71,7 @@
             android:id="@+id/form_EDT_name"
             android:layout_width="250dp"
             android:layout_height="wrap_content"
-            android:hint="שם מלא"
+            android:hint="@string/insert_full_name"
             app:boxBackgroundMode="outline"
             app:errorEnabled="true">
 
@@ -93,7 +93,7 @@
             app:strokeColor="@color/cardview_shadow_start_color"
             app:strokeWidth="1dp"
             android:fontFamily="@font/rubik"
-            android:text="עדכן"
+            android:text="@string/update"
             android:textSize="20sp"
             android:textStyle="bold"
             app:elevation="10dp"

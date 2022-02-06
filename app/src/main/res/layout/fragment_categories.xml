@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layoutDirection="rtl"
+    tools:context=".Fragments.CategoriesFragment">
+
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/fragment_RECYC_categories"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="27dp"
+        android:clipToPadding="false"
+        android:paddingBottom="57dp"
+        />
+
+</FrameLayout>

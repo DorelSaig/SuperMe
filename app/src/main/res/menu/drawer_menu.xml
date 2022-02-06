@@ -11,7 +11,7 @@
         <item
             android:id="@+id/item2"
             android:icon="@drawable/ic_navigaton_exit"
-            android:title="התנתק"
+            android:title="@string/logout"
             />
 
     </group>

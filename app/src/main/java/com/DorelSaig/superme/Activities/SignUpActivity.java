@@ -13,14 +13,20 @@ import android.util.Log;
 import android.view.View;
 
 import com.DorelSaig.superme.Firebase.MyDataManager;
+import com.DorelSaig.superme.Misc.Constants;
 import com.DorelSaig.superme.Objects.MyUser;
 import com.DorelSaig.superme.R;
 import com.github.dhaval2404.imagepicker.ImagePicker;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.textfield.TextInputLayout;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -33,8 +39,9 @@ public class SignUpActivity extends AppCompatActivity {
 
     private MaterialButton panel_BTN_update;
     private TextInputLayout form_EDT_name;
-    private MyDataManager userDataManager;
+    private MyDataManager dataManager;
     private FirebaseFirestore db;
+    private FirebaseDatabase realtimeDB;
 
     //Profile Picture
     private FloatingActionButton signup_FAB_profile_pic;
@@ -52,15 +59,15 @@ public class SignUpActivity extends AppCompatActivity {
         findViews();
         initButtons();
 
-        userDataManager = MyDataManager.getInstance();
-        db = userDataManager.getDbFireStore();
+        dataManager = MyDataManager.getInstance();
+        db = dataManager.getDbFireStore();
+        realtimeDB = dataManager.getRealTimeDB();
+
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-
-
 
     }
 
@@ -68,7 +75,7 @@ public class SignUpActivity extends AppCompatActivity {
     public void onBackPressed() {
         super.onBackPressed();
         //TODO erase UID doc from DB
-        userDataManager.getFirebaseAuth().signOut();
+        dataManager.getFirebaseAuth().signOut();
     }
 
     private void findViews() {
@@ -86,11 +93,11 @@ public class SignUpActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 String userName = form_EDT_name.getEditText().getText().toString();
-                String userID = userDataManager.getFirebaseAuth().getCurrentUser().getUid();
-                String userPhone = userDataManager.getFirebaseAuth().getCurrentUser().getPhoneNumber();
+                String userID = dataManager.getFirebaseAuth().getCurrentUser().getUid();
+                String userPhone = dataManager.getFirebaseAuth().getCurrentUser().getPhoneNumber();
                 MyUser tempMyUser = new MyUser(userID, userName, userPhone);
                 tempMyUser.setProfileImgUrl(myDownloadUri);
-                userDataManager.setCurrentUser(tempMyUser);
+                dataManager.setCurrentUser(tempMyUser);
                 storeUserInDB(tempMyUser);
                 isSubmit = true;
             }
@@ -101,32 +108,24 @@ public class SignUpActivity extends AppCompatActivity {
             public void onClick(View v) {
                 panel_BTN_update.setEnabled(false);
                 ImagePicker.with(SignUpActivity.this)
-                        .crop(1f, 1f)	    			//Crop image(Optional), Check Customization for more option
-                        .compress(1024)			//Final image size will be less than 1 MB(Optional)
-                        .maxResultSize(1080, 1080)	//Final image resolution will be less than 1080 x 1080(Optional)
+                        .crop(1f, 1f)	    			//Crop image(Optional)
+                        .compress(1024)			//Final image size will be less than 1 MB
+                        .maxResultSize(1080, 1080)	//Final image resolution will be less than 1080 x 1080
                         .start();
             }
         });
 
     }
 
-//    ActivityResultLauncher<Intent> launcher =
-//            registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), (ActivityResult result) -> {
-//                if (result.getResultCode() == RESULT_OK) {
-//                    Uri uri = result.getData().getData();
-//                    // Use the uri to load the image
-//                    signup_IMG_user.setImageURI(uri);
-//                    uri.get
-//                } else if (result.getResultCode() == ImagePicker.RESULT_ERROR) {
-//                    // Use ImagePicker.Companion.getError(result.getData()) to show an error
-//                }
-//            });
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        StorageReference userRef = userDataManager.getStorage().getReference().child("profile_pictures").child(userDataManager.getFirebaseAuth().getCurrentUser().getUid());
+        StorageReference userRef = dataManager.getStorage()
+                .getReference()
+                .child(Constants.KEY_PROFILE_PICTURES)
+                .child(dataManager.getFirebaseAuth().getCurrentUser().getUid());
 
         Uri uri = data.getData();
 
@@ -164,8 +163,30 @@ public class SignUpActivity extends AppCompatActivity {
         // [END upload_memory]
     }
 
+    /**
+     * Store User in Database
+     * @param userToStore the user of type MyUser you wish to store in DB
+     */
     private void storeUserInDB(MyUser userToStore) {
-        db.collection("users")
+        db.collection(Constants.KEY_PHONE_TO_UID).document(userToStore.getPhoneNumber()).set(userToStore.getUid()).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+
+            }
+        });
+
+        //Future proof - option to use realtime DB instead of Firestore DB
+        DatabaseReference myRef = realtimeDB.getReference("PhoneUID").child(userToStore.getPhoneNumber());
+        myRef.get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DataSnapshot> task) {
+                if(task.isSuccessful()){
+                    myRef.setValue(userToStore.getUid());
+                }
+            }
+        });
+
+        db.collection(Constants.KEY_USERS)
                 .document(userToStore.getUid())
                 .set(userToStore)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {

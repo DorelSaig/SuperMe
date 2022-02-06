@@ -8,7 +8,7 @@ public class MyItem {
     private String itemTitle = "";
     private float amount = 0;
     private String amountSuffix = "יח'";
-    private String itemImage = "";
+    private String itemImage = "https://firebasestorage.googleapis.com/v0/b/superme-e69d5.appspot.com/o/images%2Fimg_default_list_cover.jpg?alt=media&token=60b8db0a-91fd-4a10-9bc3-47418f158da1";
     private String itemIcon = "";
     private String notes = "";
     private String creatorUid = "System";

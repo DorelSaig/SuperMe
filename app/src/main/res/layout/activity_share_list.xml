@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/main_background"
+    android:layoutDirection="rtl"
+    tools:context=".Activities.ShareListActivity">
+
+    <TextView
+        android:id="@+id/addContact_TXT_headline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="10dp"
+        android:text="@string/share"
+        android:fontFamily="@font/amatica_sc_bold"
+        android:textSize="40sp"
+        />
+
+
+    <LinearLayout
+        android:id="@+id/addContact_LAY_form"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:orientation="horizontal"
+        android:layout_below="@id/addContact_TXT_headline">
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/addContact_EDT_phone"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="3dp"
+            android:layout_marginStart="6dp"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="4"
+            android:hint="@string/insert_phone_number"
+            app:placeholderText="@string/example_phone_number"
+            android:layoutDirection="ltr"
+            android:textColorHint="@color/black"
+            app:boxBackgroundColor="#ECE8E8"
+            app:boxBackgroundMode="filled"
+            app:boxStrokeColor="@color/main_buttons_yellow">
+
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/rubik"
+                android:inputType="phone"
+                android:textColorHint="#60676161"
+                android:textColor="@color/black"
+                android:textDirection="ltr"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.hbb20.CountryCodePicker
+            android:id="@+id/addContact_CCP_picker"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_weight="2"
+            android:layout_gravity="center_vertical"
+            android:elevation="10dp"
+            app:ccp_defaultPhoneCode="972"
+            android:background="#FFFFFF"
+            app:ccp_rememberLastSelection="true"
+            app:ccp_showPhoneCode="true"
+            app:ccpDialog_allowSearch="true"
+            app:ccpDialog_backgroundColor="@color/main_background"
+            app:ccp_countryPreference="IL,US,AU,GB"
+            />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/addContact_LAY_buttons"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/addContact_LAY_form"
+        android:layout_centerInParent="true"
+        android:orientation="horizontal">
+
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/addContact_BTN_search"
+            style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
+            android:layout_width="wrap_content"
+            android:layout_height="60dp"
+            android:layout_gravity="center_vertical"
+            android:layout_margin="3dp"
+            android:backgroundTint="@color/main_green"
+            android:elevation="8dp"
+            android:fontFamily="@font/rubik"
+            android:text="@string/search"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            app:icon="@drawable/ic_person_search"
+            app:strokeColor="@color/cardview_shadow_start_color"
+            app:strokeWidth="2dp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/addContact_BTN_add"
+            style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
+            android:layout_width="wrap_content"
+            android:layout_height="60dp"
+            android:layout_gravity="center_vertical"
+            android:layout_margin="3dp"
+            android:backgroundTint="@color/main_green"
+            android:elevation="8dp"
+            android:fontFamily="@font/rubik"
+            android:text="@string/add"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            app:icon="@drawable/ic_person_add"
+            app:strokeColor="@color/cardview_shadow_start_color"
+            app:strokeWidth="2dp" />
+
+    </LinearLayout>
+
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/addContact_LOT_share"
+        android:layout_width="250dp"
+        android:layout_height="250dp"
+        android:layout_centerInParent="true"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/addContact_LAY_buttons"
+        android:layout_marginTop="80dp"
+        app:lottie_autoPlay="true"
+        app:lottie_loop="true"
+        app:lottie_rawRes="@raw/anim_share"
+        app:lottie_speed="0.5" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/share_RECYC_contacts"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/addContact_LAY_buttons"
+        android:layout_marginBottom="20dp"
+        android:clipToPadding="false"
+        android:paddingBottom="57dp" />
+
+</RelativeLayout>

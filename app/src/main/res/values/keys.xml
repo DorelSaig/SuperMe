@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+<!--    Firestore Database keys-->
+    <string name="key_items">items</string>
+    <string name="key_my_items">myItems</string>
+    <string name="key_lists">lists</string>
+    <string name="key_users">users</string>
+    <string name="key_categories">categories</string>
+    <string name="key_phone_uid">phoneuid</string>
+    <string name="key_contacts">listcontacts</string>
+
+<!--    Realtime Database keys-->
+    <string name="key_tokens">Tokens</string>
+
+<!--    Storage keys-->
+    <string name="key_category_covers">category_covers</string>
+    <string name="key_items_image">items_image</string>
+    <string name="key_profile_pictures">profile_pictures</string>
+
+
+
+
+
+
+
+</resources>

@@ -3,9 +3,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/menu_back"
-        android:icon="@drawable/ic_headline_arrow_back"
-        android:title="Back"
-        app:showAsAction="ifRoom"/>
+        android:id="@+id/add_person"
+        android:icon="@drawable/ic_person_add"
+        android:title="@string/add"
+        app:showAsAction="ifRoom"
+        android:visible="false"/>
 
 </menu>
