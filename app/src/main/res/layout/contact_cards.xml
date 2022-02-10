@@ -1,52 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.google.android.material.card.MaterialCardView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="80dp"
-    app:cardCornerRadius="10dp"
-    android:elevation="10dp"
-    app:cardElevation="10dp"
     android:layout_margin="10dp"
-    android:layoutDirection="rtl"
     android:backgroundTint="#F6D592"
-    >
+    android:elevation="10dp"
+    android:layoutDirection="rtl"
+    app:cardCornerRadius="10dp"
+    app:cardElevation="10dp">
 
 
     <androidx.appcompat.widget.LinearLayoutCompat
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
         android:layout_gravity="center_vertical"
-        android:layout_marginStart="20dp">
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="10dp"
+        android:orientation="horizontal">
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/contact_IMG_profile"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1.5"
             android:layout_gravity="center_vertical"
+            android:layout_weight="1.5"
             android:scaleType="centerCrop"
             android:src="@drawable/img_profile_pic" />
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/contact_LBL_name"
             android:layout_width="0dp"
-            android:layout_height="40dp"
-            android:layout_weight="8"
+            android:layout_height="50dp"
+            android:layout_gravity="center_vertical"
             android:layout_marginStart="10dp"
             android:layout_marginEnd="8dp"
             android:layout_marginBottom="5dp"
+            android:layout_weight="8"
             android:ellipsize="end"
-            android:fontFamily="@font/bn_elkana"
-            android:layout_gravity="center_vertical"
+            android:fontFamily="@font/untitled"
             android:maxLines="2"
             android:minLines="2"
             android:text="@string/list_name"
-            android:textColor="#000000"
-            android:textSize="50sp" />
-
+            android:textStyle="bold"
+            android:textColor="@color/main_buttons_on_main_green"
+            android:textSize="40sp" />
 
 
     </androidx.appcompat.widget.LinearLayoutCompat>

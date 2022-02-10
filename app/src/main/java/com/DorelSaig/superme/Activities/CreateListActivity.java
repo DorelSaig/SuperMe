@@ -5,23 +5,21 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
-import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
 import com.DorelSaig.superme.Firebase.MyDataManager;
+import com.DorelSaig.superme.Misc.Constants;
+import com.DorelSaig.superme.Misc.Utils;
 import com.DorelSaig.superme.Objects.MyList;
 import com.DorelSaig.superme.Objects.MyUser;
 import com.DorelSaig.superme.R;
+import com.DorelSaig.superme.UploadIMGListener;
 import com.github.dhaval2404.imagepicker.ImagePicker;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.imageview.ShapeableImageView;
@@ -29,9 +27,6 @@ import com.google.android.material.progressindicator.CircularProgressIndicator;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
-
-import java.io.ByteArrayOutputStream;
 
 public class CreateListActivity extends AppCompatActivity {
 
@@ -42,11 +37,12 @@ public class CreateListActivity extends AppCompatActivity {
     private CircularProgressIndicator createList_BAR_progress;
 
     private final MyDataManager dataManager = MyDataManager.getInstance();
-    private FirebaseFirestore db;
+    private final FirebaseFirestore db = dataManager.getDbFireStore();
+    ;
     private final MyUser currentUser = MyDataManager.getInstance().getCurrentUser();
 
     private MyList tempList;
-    private StorageReference userRef;
+    private StorageReference storageRef;
 
     private boolean isSubmit;
 
@@ -61,9 +57,21 @@ public class CreateListActivity extends AppCompatActivity {
         initButtons();
 
         tempList = new MyList("No Title", currentUser.getUid());
-        userRef = dataManager.getStorage().getReference().child("lists_covers").child(tempList.getListUid());
 
-        db = dataManager.getDbFireStore();
+        storageRef = dataManager.getStorage()
+                .getReference()
+                .child(Constants.KEY_LIST_COVERS)
+                .child(tempList.getListUid());
+
+    }
+
+    private void findViews() {
+
+        createList_FAB_profile_pic = findViewById(R.id.createCat_FAB_profile_pic);
+        createList_IMG_user = findViewById(R.id.createCat_IMG_user);
+        form_EDT_name = findViewById(R.id.form_EDT_name);
+        panel_BTN_create = findViewById(R.id.panel_BTN_create);
+        createList_BAR_progress = findViewById(R.id.createCat_BAR_progress);
 
     }
 
@@ -89,7 +97,7 @@ public class CreateListActivity extends AppCompatActivity {
                 String theTitle = form_EDT_name.getEditText().getText().toString();
                 tempList.setTitle(theTitle);
                 currentUser.addToListUid(tempList.getListUid());
-                dataManager.userListsChange(tempList.getListUid());
+                dataManager.userListsChange();
 
                 storeListInDB(tempList);
                 isSubmit = true;
@@ -101,27 +109,39 @@ public class CreateListActivity extends AppCompatActivity {
     protected void onStop() {
         super.onStop();
 
-        if(!isSubmit){
-            userRef.delete().addOnFailureListener(new OnFailureListener() {
+        if (!isSubmit) {
+            storageRef.delete().addOnFailureListener(new OnFailureListener() {
                 @Override
                 public void onFailure(@NonNull Exception e) {
-                    Log.d("pttt", "onFailure: "+ e.getMessage());
+                    Log.d("pttt", "onFailure: " + e.getMessage());
                 }
             });
         }
 
     }
 
+    /**
+     * Load ImagePicker activity to choose the category cover
+     */
     private void choseCover() {
         ImagePicker.with(CreateListActivity.this)
-                .crop()	    			//Crop image(Optional), Check Customization for more option
-                .compress(1024)			//Final image size will be less than 1 MB(Optional)
+                .crop()                    //Crop image(Optional), Check Customization for more option
+                .compress(1024)            //Final image size will be less than 1 MB(Optional)
                 .crop(2f, 1f)
                 .maxResultSize(1080, 1080)    //Final image resolution will be less than 1080 x 1080(Optional)
                 .start();
     }
 
-
+    /**
+     * Results From ImagePicker will be catch here
+     * will place the image in the relevant Image View
+     * Right after that, will catch the image bytes back from the view and update them in the Firebase Storage.
+     * After successful upload will update the Object Url Field
+     *
+     * @param requestCode The integer request code originally supplied to startActivityForResult(), allowing you to identify who this result came from.
+     * @param resultCode  The integer result code returned by the child activity through its setResult().
+     * @param data        An Intent, which can return result data to the caller (various data can be attached to Intent "extras").
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -129,51 +149,72 @@ public class CreateListActivity extends AppCompatActivity {
         createList_BAR_progress.setVisibility(View.VISIBLE);
         panel_BTN_create.setEnabled(false);
 
-
-
-        Uri uri = data.getData();
-        createList_IMG_user.setImageURI(uri);
-
-        // [START upload_memory]
-        // Get the data from an ImageView as bytes
-        createList_IMG_user.setDrawingCacheEnabled(true);
-        createList_IMG_user.buildDrawingCache();
-        Bitmap bitmap = ((BitmapDrawable) createList_IMG_user.getDrawable()).getBitmap();
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-        byte[] bytes = baos.toByteArray();
-
-
-        UploadTask uploadTask = userRef.putBytes(bytes);
-
-        uploadTask.addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+        UploadIMGListener uploadIMGListener = new UploadIMGListener() {
             @Override
-            public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
-                if (task.isSuccessful()){
-                    userRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                        @Override
-                        public void onSuccess(Uri uri) {
-                            createList_BAR_progress.setVisibility(View.INVISIBLE);
-                            panel_BTN_create.setEnabled(true);
-                            tempList.setImage_cover(uri.toString());
+            public void uploadDone(String theUrl) {
+                //View Indicates the process of the image uploading Done
+                // by removing the progress bar indicator and making the button enabled
+                createList_BAR_progress.setVisibility(View.INVISIBLE);
+                panel_BTN_create.setEnabled(true);
 
-                        }
-                    });
+                // Set the image URL to the object we created
+                tempList.setImage_cover(theUrl);
 
-                } else {
-                    String message = task.getException().getMessage();
-                    Toast.makeText(CreateListActivity.this, "Error: " + message, Toast.LENGTH_SHORT).show();
-                }
             }
-        });
+        };
 
-        // [END upload_memory]
+        if (data != null) {
+            Utils.imageUploading(uploadIMGListener, data, createList_IMG_user, storageRef, CreateListActivity.this);
+        } else {
+            Toast.makeText(CreateListActivity.this, "Error: Null Data Received", Toast.LENGTH_SHORT).show();
+        }
+
+        //TODO Erease Comment After final test
+//        Uri uri = data.getData();
+//        createList_IMG_user.setImageURI(uri);
+//
+//        // [START upload_memory]
+//        // Get the data from an ImageView as bytes
+//        createList_IMG_user.setDrawingCacheEnabled(true);
+//        createList_IMG_user.buildDrawingCache();
+//        Bitmap bitmap = ((BitmapDrawable) createList_IMG_user.getDrawable()).getBitmap();
+//        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+//        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+//        byte[] bytes = baos.toByteArray();
+//
+//        UploadTask uploadTask = storageRef.putBytes(bytes);
+//
+//        uploadTask.addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+//            @Override
+//            public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+//                if (task.isSuccessful()){
+//                    storageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+//                        @Override
+//                        public void onSuccess(Uri uri) {
+//                            createList_BAR_progress.setVisibility(View.INVISIBLE);
+//                            panel_BTN_create.setEnabled(true);
+//                            tempList.setImage_cover(uri.toString());
+//
+//                        }
+//                    });
+//
+//                } else {
+//                    String message = task.getException().getMessage();
+//                    Toast.makeText(CreateListActivity.this, "Error: " + message, Toast.LENGTH_SHORT).show();
+//                }
+//            }
+//        });
+//
+//        // [END upload_memory]
     }
 
-
-
+    /**
+     * Function will store the given List to Firestore.
+     *
+     * @param listToStore is the list you wish to store in the Firebase Firestore
+     */
     private void storeListInDB(MyList listToStore) {
-        db.collection("lists")
+        db.collection(Constants.KEY_LISTS)
                 .document(listToStore.getListUid())
                 .set(listToStore)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -183,7 +224,6 @@ public class CreateListActivity extends AppCompatActivity {
                         //startActivity(new Intent(CreateListActivity.this, MainActivity.class));
                         finish();
                     }
-
                 })
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
@@ -193,13 +233,5 @@ public class CreateListActivity extends AppCompatActivity {
                 });
     }
 
-    private void findViews() {
 
-        createList_FAB_profile_pic = findViewById(R.id.createList_FAB_profile_pic);
-        createList_IMG_user = findViewById(R.id.createList_IMG_user);
-        form_EDT_name = findViewById(R.id.form_EDT_name);
-        panel_BTN_create = findViewById(R.id.panel_BTN_create);
-        createList_BAR_progress = findViewById(R.id.createList_BAR_progress);
-
-    }
 }

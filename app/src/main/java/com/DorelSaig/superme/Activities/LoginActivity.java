@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.DorelSaig.superme.Firebase.MyDataManager;
+import com.DorelSaig.superme.Misc.Constants;
 import com.DorelSaig.superme.Objects.MyUser;
 import com.DorelSaig.superme.R;
 import com.airbnb.lottie.LottieAnimationView;
@@ -62,9 +63,6 @@ public class LoginActivity extends AppCompatActivity {
 
         if (FirebaseAuth.getInstance().getCurrentUser() != null) {
             loadUserFromDB();
-//            Intent intent = new Intent(this, MyListsActivity.class);
-//            startActivity(intent);
-//            finish();
         }
 
         panel_BTN_login.setOnClickListener(new View.OnClickListener() {
@@ -84,19 +82,18 @@ public class LoginActivity extends AppCompatActivity {
     private void loadUserFromDB() {
         // Successfully signed in
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        DocumentReference docRef = db.collection("users").document(user.getUid());
+        DocumentReference docRef = db.collection(Constants.KEY_USERS).document(user.getUid());
         docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
                 if (documentSnapshot.exists()) {
-                    Toast.makeText(LoginActivity.this, "User Is Stored In DataBase", Toast.LENGTH_SHORT).show();
                     Log.d("pttt", "DocumentSnapshot data: " + documentSnapshot.getData());
                     MyUser loadedUser = documentSnapshot.toObject(MyUser.class);
                     MyDataManager.getInstance().setCurrentUser(loadedUser);
                     startActivity(new Intent(LoginActivity.this, MainActivity.class));
                 } else {
                     Log.d("pttt", "No such document");
-                    Log.d("pttt", user.getUid().toString());
+                    Log.d("pttt", user.getUid());
                     startActivity(new Intent(LoginActivity.this, SignUpActivity.class));
                 }
                 finish();
@@ -105,12 +102,17 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * When the sign-in flow is complete, you will receive the result in
+     *
+     * @param result The result received from sign-in flow
+     */
     private void onSignInResult(FirebaseAuthUIAuthenticationResult result) {
         IdpResponse response = result.getIdpResponse();
         if (result.getResultCode() == RESULT_OK) {
-                panel_BTN_login.setVisibility(View.INVISIBLE);
-                panel_PRG_bar.setVisibility(View.VISIBLE);
-                loadUserFromDB();
+            panel_BTN_login.setVisibility(View.INVISIBLE);
+            panel_PRG_bar.setVisibility(View.VISIBLE);
+            loadUserFromDB();
         } else {
             // Sign in failed. If response is null the user canceled the
             // sign-in flow using the back button. Otherwise check

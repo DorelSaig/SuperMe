@@ -4,8 +4,8 @@
     android:id="@+id/fragment_LAY_frame"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layoutDirection="rtl"
     android:background="@color/main_background"
+    android:layoutDirection="rtl"
     tools:context=".Fragments.HomeListsFragment">
 
     <RelativeLayout
@@ -17,31 +17,33 @@
             android:id="@+id/fragment_TXT_1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
             android:layout_above="@id/fragment_TXT_2"
+            android:layout_centerHorizontal="true"
+            android:fontFamily="@font/untitled"
             android:text="חסר משהו?"
-            android:fontFamily="@font/amatica_sc_bold"
+            android:textColor="@color/main_buttons_on_main_green"
             android:textSize="60sp"
-            android:textColor="@color/main_buttons_on_main_green"/>
+            android:textStyle="bold" />
 
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/fragment_TXT_2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
             android:layout_above="@id/fragment_IMG_empty"
+            android:layout_centerHorizontal="true"
+            android:fontFamily="@font/untitled"
             android:text="תתחילו להוסיף מוצרים, שלא תשכחו"
-            android:fontFamily="@font/amatica_sc_bold"
+            android:textColor="@color/black"
             android:textSize="20sp"
-            android:textColor="@color/black"/>
+            android:textStyle="bold" />
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/fragment_IMG_empty"
             android:layout_width="300dp"
             android:layout_height="300dp"
             android:layout_centerInParent="true"
-            android:src="@drawable/img_empty_cart"/>
+            android:src="@drawable/img_empty_cart" />
 
     </RelativeLayout>
 
@@ -51,9 +53,7 @@
         android:layout_height="match_parent"
         android:layout_marginBottom="20dp"
         android:clipToPadding="false"
-        android:paddingBottom="57dp"
-        />
-
+        android:paddingBottom="57dp" />
 
 
 </FrameLayout>

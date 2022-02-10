@@ -23,6 +23,7 @@ import com.DorelSaig.superme.Activities.CreateListActivity;
 import com.DorelSaig.superme.Adapters.Adapter_ShoppingLists;
 import com.DorelSaig.superme.Firebase.MyDataManager;
 import com.DorelSaig.superme.ListItemClickListener;
+import com.DorelSaig.superme.Misc.Constants;
 import com.DorelSaig.superme.Objects.MyList;
 import com.DorelSaig.superme.Objects.MyUser;
 import com.DorelSaig.superme.R;
@@ -112,6 +113,8 @@ public class HomeListsFragment extends Fragment {
             public void listItemClicked(MyList list, int position) {
                 dataManager.setCurrentListUid(list.getListUid());
                 dataManager.setCurrentListTitle(list.getTitle());
+                dataManager.setCurrentListCreator(list.getCreatorUid());
+               // dataManager.setCurrentList(list);
 
                 getParentFragmentManager()
                         .beginTransaction()
@@ -153,13 +156,13 @@ public class HomeListsFragment extends Fragment {
         db.collection(getString(R.string.key_lists)).document(myList.getListUid()).delete().addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
-                CollectionReference usersCollect = db.collection("users");
+                CollectionReference usersCollect = db.collection(Constants.KEY_USERS);
                 for (String uid : myList.getSharedWithUidsList()){
                     usersCollect.document(uid).update("myListsUids", FieldValue.arrayRemove(myList.getListUid()));
                 }
                 usersCollect.document(myList.getCreatorUid()).update("myListsUids", FieldValue.arrayRemove(myList.getListUid()));
                 currentUser.removeFromListsUids(myList.getListUid());
-                Task<Void> listCover = dataManager.getStorage().getReference().child("lists_covers").child(myList.getListUid()).delete();
+                Task<Void> listCover = dataManager.getStorage().getReference().child(Constants.KEY_LIST_COVERS).child(myList.getListUid()).delete();
 
                 Toast.makeText(currentActivity, myList.getTitle() + " נמחק בהצלחה ", Toast.LENGTH_SHORT).show();
             }
@@ -185,10 +188,12 @@ public class HomeListsFragment extends Fragment {
     }
 
 
-    // ---> RecycleView Lists Listener
+    /**
+     * Listen and triggers operation whenever a list - been added, modified or removed in firebase
+     */
     private void listsArrayChangeListener() {
 
-        CollectionReference collectionReference= db.collection(getString(R.string.key_lists));
+        CollectionReference collectionReference= db.collection(Constants.KEY_LISTS);
         listsListener =  collectionReference.addSnapshotListener(new EventListener<QuerySnapshot>() {
                     @Override
                     public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {

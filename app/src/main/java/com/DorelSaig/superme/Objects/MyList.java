@@ -23,6 +23,7 @@ public class MyList {
         this.creatorUid = creatorUid;
         this.itemsUid = new ArrayList<>();
         this.sharedWithUidsList = new ArrayList<>();
+        this.sharedWithUidsList.add(creatorUid);
     }
 
     public String getListUid() {

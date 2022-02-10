@@ -24,7 +24,6 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-
             <FrameLayout
                 android:id="@+id/profile_FRM_nav"
                 android:layout_width="match_parent"
@@ -32,7 +31,6 @@
                 android:layout_gravity="center_horizontal"
                 android:layout_marginBottom="20dp"
                 android:orientation="vertical">
-
 
                 <com.google.android.material.progressindicator.CircularProgressIndicator
                     android:id="@+id/createItem_BAR_progress"
@@ -44,13 +42,6 @@
                     android:elevation="1dp"
                     app:indicatorColor="@color/main_buttons_green"
                     />
-
-                <!--    <com.google.android.material.imageview.ShapeableImageView-->
-                <!--        android:id="@+id/drawer_IMG_myprofile"-->
-                <!--        android:layout_width="wrap_content"-->
-                <!--        android:layout_height="wrap_content"-->
-                <!--        android:src="@mipmap/ic_launcher"-->
-                <!--        />-->
 
                 <com.google.android.material.floatingactionbutton.FloatingActionButton
                     android:id="@+id/createItem_FAB_profile_pic"
@@ -64,17 +55,6 @@
                     app:srcCompat="@drawable/ic_baseline_edit"
                     app:tint="@color/white"
                     app:useCompatPadding="false" />
-
-                <!--            <com.airbnb.lottie.LottieAnimationView-->
-                <!--                android:id="@+id/animationView"-->
-                <!--                android:layout_width="150dp"-->
-                <!--                android:layout_height="150dp"-->
-                <!--                android:layout_gravity="center_horizontal"-->
-                <!--                android:layout_marginBottom="20dp"-->
-                <!--                app:lottie_autoPlay="true"-->
-                <!--                app:lottie_loop="true"-->
-                <!--                app:lottie_rawRes="@raw/anim_profile_pic"-->
-                <!--                app:lottie_speed="0.5" />-->
 
                 <com.google.android.material.imageview.ShapeableImageView
                     android:id="@+id/createItem_IMG_user"
@@ -167,20 +147,20 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text="@string/ones"
-                        android:fontFamily="@font/amatica_sc_bold"
+                        android:fontFamily="@font/untitled"
                         android:textSize="25sp"
                         android:textStyle="bold"
                         android:textColor="@color/black"
                         style="?attr/materialButtonOutlinedStyle"
-
                         />
+
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/createItem_TGBTN_kilo"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text="@string/kilos"
-                        android:fontFamily="@font/amatica_sc_bold"
+                        android:fontFamily="@font/untitled"
                         android:textSize="25sp"
                         android:textStyle="bold"
                         android:textColor="@color/black"

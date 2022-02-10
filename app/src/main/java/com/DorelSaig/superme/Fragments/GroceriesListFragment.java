@@ -1,5 +1,6 @@
 package com.DorelSaig.superme.Fragments;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
@@ -29,6 +30,8 @@ import com.DorelSaig.superme.Activities.ShareListActivity;
 import com.DorelSaig.superme.Adapters.Adapter_Items;
 import com.DorelSaig.superme.Firebase.MyDataManager;
 import com.DorelSaig.superme.ItemsClickListener;
+import com.DorelSaig.superme.Misc.Constants;
+import com.DorelSaig.superme.Misc.Utils;
 import com.DorelSaig.superme.Objects.MyItem;
 import com.DorelSaig.superme.Objects.MyUser;
 import com.DorelSaig.superme.R;
@@ -50,9 +53,8 @@ import java.util.ArrayList;
 
 public class GroceriesListFragment extends Fragment {
 
-    private MyDataManager dataManager = MyDataManager.getInstance();
-    private FirebaseFirestore db = dataManager.getDbFireStore();
-    private MyUser currentUser = dataManager.getCurrentUser();
+    private final MyDataManager dataManager = MyDataManager.getInstance();
+    private final FirebaseFirestore db = dataManager.getDbFireStore();
 
     private Activity currentActivity;
 
@@ -95,7 +97,7 @@ public class GroceriesListFragment extends Fragment {
         // Get The Current Loading List From dataManager.
         currentListUID = dataManager.getCurrentListUid();
 
-        listRef = db.collection("lists").document(currentListUID);
+        listRef = db.collection(Constants.KEY_LISTS).document(currentListUID);
 
         findViews(view);
         initButtons();
@@ -105,23 +107,9 @@ public class GroceriesListFragment extends Fragment {
 
         createRecycler();
 
-        //Recycler Initiate
-
-
         itemsArrayChangeListener();
 
-
-        adapter_items.setItemClickListener(new ItemsClickListener() {
-            @Override
-            public void itemClicked(MyItem item, int position) {
-                Toast.makeText(getContext(), item.getItemTitle() + "position: " + position, Toast.LENGTH_SHORT).show();
-                dataManager.setCurrentItem(item);
-                startActivity(new Intent(currentActivity, EditItemActivity.class));
-            }
-        });
-
         enableSwipeToDeleteAndUndo();
-
 
         return view;
     }
@@ -178,9 +166,20 @@ public class GroceriesListFragment extends Fragment {
         fragment_RECYC_items.setHasFixedSize(true);
         fragment_RECYC_items.setItemAnimator(new DefaultItemAnimator());
         fragment_RECYC_items.setAdapter(adapter_items);
+
+        adapter_items.setItemClickListener(new ItemsClickListener() {
+            @Override
+            public void itemClicked(MyItem item, int position) {
+                dataManager.setCurrentItem(item);
+                startActivity(new Intent(currentActivity, EditItemActivity.class));
+            }
+        });
+
     }
 
-
+    /**
+     * Initiate the Swipe To Delete functionality
+     */
     private void enableSwipeToDeleteAndUndo() {
 
         //On Item Swipe Callback
@@ -201,8 +200,8 @@ public class GroceriesListFragment extends Fragment {
                     fragment_LAY_empty.setVisibility(View.VISIBLE);
                 }
 
-                Snackbar snackbar = Snackbar
-                        .make(fragment_LAY_frame, "מוצר הוסר מהרשימה", Snackbar.LENGTH_LONG)
+                Snackbar snackbar = Utils.showErrorSnackBar(fragment_LAY_frame, tempItem.getItemTitle() + getString(R.string.removed), Snackbar.LENGTH_SHORT)
+                        .setAnchorView(R.id.toolbar_FAB_add)
                         .setAction(getString(R.string.cancel), new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
@@ -219,7 +218,7 @@ public class GroceriesListFragment extends Fragment {
                             public void onDismissed(Snackbar transientBottomBar, int event) {
                                 super.onDismissed(transientBottomBar, event);
                                 if (event == BaseTransientBottomBar.BaseCallback.DISMISS_EVENT_TIMEOUT) {
-                                    listRef.collection("items").document(tempItem.getItemUid()).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    listRef.collection(Constants.KEY_ITEMS).document(tempItem.getItemUid()).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
                                         @Override
                                         public void onSuccess(Void unused) {
                                             Log.d("pttt", "Item Removed From firebase");
@@ -228,12 +227,8 @@ public class GroceriesListFragment extends Fragment {
                                 }
                             }
                         });
-
-                snackbar.setAnchorView(R.id.toolbar_FAB_add)
-                        .setBackgroundTint(Color.parseColor("#F9E1DC"))
-                        .setActionTextColor(Color.RED)
+                snackbar
                         .show();
-
 
                 adapter_items.notifyDataSetChanged();
 
@@ -253,16 +248,17 @@ public class GroceriesListFragment extends Fragment {
                         R.anim.fade_in,   // popEnter
                         R.anim.slide_out  // popExit
                 )
-
                 .replace(R.id.main_FRG_container, MainMarketFragment.class, null)
                 .addToBackStack("tag")
                 .commit();
-
     }
 
+    /**
+     * Listen and triggers operation whenever a list ref. of items - Gets new item added, modified or removed in firebase
+     */
     private void itemsArrayChangeListener() {
 
-        listRef.collection("items").addSnapshotListener(new EventListener<QuerySnapshot>() {
+        listRef.collection(Constants.KEY_ITEMS).addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
                 if (error != null) {
@@ -270,25 +266,24 @@ public class GroceriesListFragment extends Fragment {
                     return;
                 }
 
-                int counter = value.size();
-                listRef.update("items_Counter", counter);
-
-
                 assert value != null;
+                int counter = value.size();
+                listRef.update(Constants.FIELD_LIST_COUNTER, counter);
+
                 for (DocumentChange dc : value.getDocumentChanges()) {
                     switch (dc.getType()) {
+
                         case ADDED: {
                             MyItem newItem = dc.getDocument().toObject(MyItem.class);
-                            //listRef.update("items_Counter", FieldValue.increment(1));
                             if (itemsArrayList.isEmpty())
                                 fragment_LAY_empty.setVisibility(View.INVISIBLE);
                             itemsArrayList.add(newItem);
-
 
                             Log.d("pttt", "Item Added To firebase");
                             //adapter_items.notifyItemInserted(0);
                             break;
                         }
+
                         case MODIFIED: {
                             MyItem newItem = dc.getDocument().toObject(MyItem.class);
                             for (int i = 0; i < itemsArrayList.size(); i++) {
@@ -300,28 +295,26 @@ public class GroceriesListFragment extends Fragment {
                             Log.d("pttt", "Item Changed in firebase");
                             break;
                         }
+
                         case REMOVED: {
                             MyItem newItem = dc.getDocument().toObject(MyItem.class);
                             for (int i = 0; i < itemsArrayList.size(); i++) {
                                 if (itemsArrayList.get(i).getItemUid().equals(newItem.getItemUid())) {
                                     itemsArrayList.remove(i);
-                                    //listRef.update("items_Counter", FieldValue.increment(-1));
                                     //adapter_items.notifyItemRemoved(i);
                                 }
                             }
                             Log.d("pttt", "Item Removed From firebase");
                             break;
                         }
+
                         default:
                             break;
                     }
                     adapter_items.notifyDataSetChanged();
-
                 }
-
             }
         });
     }
-
 
 }

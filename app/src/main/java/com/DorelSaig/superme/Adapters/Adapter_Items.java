@@ -1,6 +1,7 @@
 package com.DorelSaig.superme.Adapters;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -45,13 +46,18 @@ public class Adapter_Items extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         ListViewHolder listViewHolder = (ListViewHolder) holder;
         MyItem item = getItem(position);
 
-        listViewHolder.item_LBL_title.setText(item.getItemTitle());
+        listViewHolder.item_LBL_title.setText(String.format(" %s", item.getItemTitle()));
+        listViewHolder.item_LBL_notes.setText(item.getNotes());
         listViewHolder.item_LBL_amount.setText(String.format("%s %s", item.getAmount(), item.getAmountSuffix()));
 
         Glide
                 .with(activity)
                 .load(item.getItemIcon())
+                .centerCrop()
                 .into(listViewHolder.item_IMG_icon);
+
+        listViewHolder.item_IMG_icon.setVisibility(View.VISIBLE);
+        Log.d("pttt", "onBindViewHolder:" + item.getItemIcon());
     }
 
     @Override
@@ -65,18 +71,19 @@ public class Adapter_Items extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
 
 
-
     private class ListViewHolder extends RecyclerView.ViewHolder {
 
         public AppCompatImageView item_IMG_icon;
         public MaterialTextView item_LBL_title;
         public MaterialTextView item_LBL_amount;
+        public MaterialTextView item_LBL_notes;
 
         public ListViewHolder(View itemView) {
             super(itemView);
             this.item_IMG_icon = itemView.findViewById(R.id.item_IMG_icon);
             this.item_LBL_title = itemView.findViewById(R.id.item_LBL_title);
             this.item_LBL_amount = itemView.findViewById(R.id.item_LBL_amount);
+            this.item_LBL_notes = itemView.findViewById(R.id.item_LBL_notes);
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override

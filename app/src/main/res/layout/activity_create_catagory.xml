@@ -7,15 +7,26 @@
     android:layoutDirection="rtl"
     tools:context=".Activities.CreateCategoryActivity">
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/createcat_CARD_main"
+        android:layout_marginBottom="30dp"
+        android:fontFamily="@font/untitled"
+        android:text="@string/create_new_category"
+        android:textAlignment="center"
+        android:textSize="40sp"
+        android:textStyle="bold" />
 
     <com.google.android.material.card.MaterialCardView
+        android:id="@+id/createcat_CARD_main"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:elevation="8dp"
         app:cardBackgroundColor="@color/white"
-        app:cardElevation="8dp"
-        app:cardCornerRadius="6dp">
+        app:cardCornerRadius="6dp"
+        app:cardElevation="8dp">
 
         <LinearLayout
             android:layout_width="250dp"
@@ -33,15 +44,14 @@
 
 
                 <com.google.android.material.progressindicator.CircularProgressIndicator
-                    android:id="@+id/createList_BAR_progress"
+                    android:id="@+id/createCat_BAR_progress"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:indeterminate="true"
                     android:layout_gravity="center"
-                    android:visibility="invisible"
                     android:elevation="1dp"
-                    app:indicatorColor="@color/main_buttons_green"
-                    />
+                    android:indeterminate="true"
+                    android:visibility="invisible"
+                    app:indicatorColor="@color/main_buttons_green" />
 
                 <!--    <com.google.android.material.imageview.ShapeableImageView-->
                 <!--        android:id="@+id/drawer_IMG_myprofile"-->
@@ -51,7 +61,7 @@
                 <!--        />-->
 
                 <com.google.android.material.floatingactionbutton.FloatingActionButton
-                    android:id="@+id/createList_FAB_profile_pic"
+                    android:id="@+id/createCat_FAB_profile_pic"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="start|bottom"
@@ -75,7 +85,7 @@
                 <!--                app:lottie_speed="0.5" />-->
 
                 <com.google.android.material.imageview.ShapeableImageView
-                    android:id="@+id/createList_IMG_user"
+                    android:id="@+id/createCat_IMG_user"
                     android:layout_width="250dp"
                     android:layout_height="150dp"
                     android:layout_gravity="center_horizontal"
@@ -91,28 +101,27 @@
                 android:id="@+id/form_EDT_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="10dp"
                 android:hint="@string/insert_category_title"
-                app:boxBackgroundMode="filled"
-                app:errorEnabled="true"
-                app:boxStrokeColor="@color/main_buttons_yellow"
+                android:padding="10dp"
                 android:textColorHint="@color/black"
                 app:boxBackgroundColor="#ECE8E8"
-                >
+                app:boxBackgroundMode="filled"
+                app:boxStrokeColor="@color/main_buttons_yellow"
+                app:errorEnabled="true">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="textPersonName"
-                    android:textSize="16sp"
-                    android:textColor="@color/black"
                     android:fontFamily="@font/rubik"
-                    android:textStyle="bold"
-                    />
+                    android:inputType="textPersonName"
+                    android:textColor="@color/black"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/panel_BTN_create"
+                style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
                 android:layout_width="wrap_content"
                 android:layout_height="60dp"
                 android:layout_gravity="center_horizontal"
@@ -123,7 +132,6 @@
                 android:text="@string/add"
                 android:textSize="20sp"
                 android:textStyle="bold"
-                style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
                 app:icon="@drawable/ic_baseline_save"
                 app:strokeColor="@color/cardview_shadow_start_color"
                 app:strokeWidth="2dp" />

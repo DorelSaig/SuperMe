@@ -3,8 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layoutDirection="rtl"
     android:background="@color/main_background"
+    android:layoutDirection="rtl"
     tools:context=".Fragments.HomeListsFragment">
 
     <androidx.recyclerview.widget.RecyclerView

@@ -28,10 +28,21 @@
     <string name="list_updated">הרשימה עודכנה</string>
     <string name="shopping_done">הקניות בוצעו</string>
 
+
+    <string name="removed"> הוסר מהרשימה</string>
+
     <!--    PlaceHolders-->
     <string name="items_amount">מספר_פריטים</string>
     <string name="item_name">שם_מוצר</string>
     <string name="list_name">שם רשימה</string>
     <string name="insert_category_title">הכנס שם קטגוריה</string>
+    <string name="text_example">דוגמא Example</string>
+    <string name="placeholder">\" \"</string>
+    <string name="create_new_category">יצירת קטגוריה חדשה</string>
+    <string name="create_new_list">יצירת רשימה חדשה</string>
+    <string name="browse_by_cat">חיפוש לפי קטגוריה</string>
+    <string name="your_items">הפריטים שלך:</string>
+    <string name="chat">Chat</string>
+    <string name="settings">הגדרות</string>
 
 </resources>

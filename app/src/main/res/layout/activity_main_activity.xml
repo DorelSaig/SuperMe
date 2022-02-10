@@ -11,17 +11,15 @@
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/main_background"
-        android:fitsSystemWindows="true"
         android:animateLayoutChanges="true"
-        >
+        android:background="@color/main_background"
+        android:fitsSystemWindows="true">
 
 
         <com.google.android.material.appbar.AppBarLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:liftOnScroll="true"
-            >
+            app:liftOnScroll="true">
 
             <com.google.android.material.appbar.MaterialToolbar
                 android:id="@+id/panel_Toolbar_Top"
@@ -29,19 +27,18 @@
                 android:layout_height="?attr/actionBarSize"
                 android:background="@color/main_green"
                 app:layout_scrollFlags="scroll|enterAlways|snap"
-                app:titleTextAppearance="@style/ToolBar.MyTextAppearance"
+                app:menu="@menu/top_app_bar_menu"
                 app:navigationIcon="@drawable/ic_headline_arrow_back"
                 app:navigationIconTint="@color/white"
                 app:title="הרשימות שלי"
                 app:titleCentered="true"
+                app:titleTextAppearance="@style/ToolBar.MyTextAppearance"
                 app:titleTextColor="@color/white"
-                app:menu="@menu/top_app_bar_menu"
 
                 />
 
 
         </com.google.android.material.appbar.AppBarLayout>
-
 
 
         <androidx.fragment.app.FragmentContainerView
@@ -54,76 +51,58 @@
 
             />
 
-<!--        <androidx.recyclerview.widget.RecyclerView-->
-<!--            android:id="@+id/main_LST_lists"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="match_parent"-->
-
-<!--            android:layout_marginBottom="20dp"-->
-<!--            android:clipToPadding="false"-->
-<!--            android:paddingBottom="57dp" />-->
-
-<!--        <FrameLayout-->
-<!--            android:id="@+id/main_FRL_container"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="match_parent"-->
-<!--            android:layout_marginBottom="20dp"/>-->
 
         <RelativeLayout
             android:id="@+id/panel_VIEW_message"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
-            android:background="#ECE0C9"
             android:layout_marginBottom="15dp"
-            android:paddingBottom="100dp"
+            android:background="#ECE0C9"
             android:clickable="true"
-            android:visibility="invisible"
-
-            >
+            android:paddingBottom="100dp"
+            android:visibility="invisible">
 
             <View
                 android:id="@+id/spacer"
                 android:layout_width="match_parent"
                 android:layout_height="3dp"
-                android:background="#94000000"/>
+                android:background="#94000000" />
 
             <LinearLayout
                 android:id="@+id/msg_LYT_top"
-                android:layout_below="@id/spacer"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_below="@id/spacer"
                 android:background="#88DA9F27"
-                android:orientation="horizontal"
-                android:fadingEdge="horizontal">
+                android:fadingEdge="horizontal"
+                android:orientation="horizontal">
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/panel_BTN_chat_back"
                     style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="top"
                     android:layout_weight="1"
                     android:backgroundTint="#00FFFFFF"
                     app:icon="@drawable/ic_baseline_close"
                     app:iconSize="40dp"
-                    app:iconTint="@color/white"
-                    android:layout_gravity="top"/>
-
+                    app:iconTint="@color/white" />
 
 
                 <com.google.android.material.imageview.ShapeableImageView
                     android:layout_width="0dp"
                     android:layout_height="45dp"
-                    android:layout_weight="3"
+                    android:layout_gravity="top"
                     android:layout_marginTop="10dp"
-                    android:src="@drawable/ic_baseline_chat"
-                    android:layout_gravity="top"/>
+                    android:layout_weight="3"
+                    android:src="@drawable/ic_baseline_chat" />
 
                 <View
                     android:layout_width="0dp"
-                    android:layout_weight="1"
                     android:layout_height="match_parent"
-                    />
+                    android:layout_weight="1" />
             </LinearLayout>
 
             <LinearLayout
@@ -143,7 +122,7 @@
                     android:layout_weight="1"
                     android:backgroundTint="@color/white"
                     android:elevation="5dp"
-                    android:fontFamily="@font/amatica_sc_bold"
+                    android:fontFamily="@font/untitled"
                     android:insetLeft="5dp"
                     android:insetTop="5dp"
                     android:insetRight="5dp"
@@ -151,6 +130,7 @@
                     android:text="@string/going_shopping"
                     android:textAlignment="center"
                     android:textSize="40sp"
+                    android:textStyle="bold"
                     app:elevation="5dp" />
 
                 <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
@@ -161,7 +141,7 @@
                     android:layout_weight="1"
                     android:backgroundTint="@color/white"
                     android:elevation="5dp"
-                    android:fontFamily="@font/amatica_sc_bold"
+                    android:fontFamily="@font/untitled"
                     android:insetLeft="5dp"
                     android:insetTop="5dp"
                     android:insetRight="5dp"
@@ -169,6 +149,7 @@
                     android:text="@string/list_updated"
                     android:textAlignment="center"
                     android:textSize="40sp"
+                    android:textStyle="bold"
                     app:elevation="5dp" />
 
                 <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
@@ -179,7 +160,7 @@
                     android:layout_weight="1"
                     android:backgroundTint="@color/white"
                     android:elevation="5dp"
-                    android:fontFamily="@font/amatica_sc_bold"
+                    android:fontFamily="@font/untitled"
                     android:insetLeft="5dp"
                     android:insetTop="5dp"
                     android:insetRight="5dp"
@@ -187,6 +168,7 @@
                     android:text="@string/shopping_done"
                     android:textAlignment="center"
                     android:textSize="40sp"
+                    android:textStyle="bold"
                     app:elevation="5dp" />
 
 
@@ -221,8 +203,6 @@
             app:tint="@color/white" />
 
 
-
-
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
 
@@ -233,7 +213,6 @@
         android:layout_gravity="start"
         app:headerLayout="@layout/nav_header"
         app:menu="@menu/drawer_menu" />
-
 
 
 </androidx.drawerlayout.widget.DrawerLayout>

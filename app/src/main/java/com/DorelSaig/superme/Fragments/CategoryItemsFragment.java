@@ -1,5 +1,6 @@
 package com.DorelSaig.superme.Fragments;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
@@ -23,6 +24,7 @@ import com.DorelSaig.superme.Adapters.Adapter_My_Items;
 import com.DorelSaig.superme.Firebase.MyDataManager;
 import com.DorelSaig.superme.ItemsClickListener;
 import com.DorelSaig.superme.Misc.Constants;
+import com.DorelSaig.superme.Misc.Utils;
 import com.DorelSaig.superme.Objects.MyItem;
 import com.DorelSaig.superme.Objects.MyUser;
 import com.DorelSaig.superme.R;
@@ -42,9 +44,9 @@ import java.util.ArrayList;
 
 public class CategoryItemsFragment extends Fragment {
 
-    private MyDataManager dataManager = MyDataManager.getInstance();
-    private FirebaseFirestore db = dataManager.getDbFireStore();
-    private MyUser currentUser = dataManager.getCurrentUser();
+    private final MyDataManager dataManager = MyDataManager.getInstance();
+    private final FirebaseFirestore db = dataManager.getDbFireStore();
+    private final MyUser currentUser = dataManager.getCurrentUser();
 
     private String currentListUID;
     private String currentCategoryUID;
@@ -62,13 +64,9 @@ public class CategoryItemsFragment extends Fragment {
         // Required empty public constructor
     }
 
-
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-
         currentActivity = getActivity();
     }
 
@@ -78,6 +76,7 @@ public class CategoryItemsFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = LayoutInflater.from(getContext()).inflate(R.layout.fragment_category_items, container, false);
 
+        //Get The current status information
         currentListUID = dataManager.getCurrentListUid();
         currentCategoryUID = dataManager.getCurrentCategoryUid();
 
@@ -86,56 +85,22 @@ public class CategoryItemsFragment extends Fragment {
 
         toolbar_FAB_add.setVisibility(View.INVISIBLE);
 
-        toolbar_FAB_add.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(currentActivity, "from Fragment Add", Toast.LENGTH_LONG).show();
-                addItem();
-            }
-        });
-
-
-
+        //Check if the current user as permission to add items to the category
+        // if so, will show him the Plus Button
         if(currentUser.getUid().equals(Constants.EDITOR)){
             toolbar_FAB_add.setVisibility(View.VISIBLE);
+
+            toolbar_FAB_add.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    addItem();
+                }
+            });
         }
 
-
-        itemsArrayList = new ArrayList<>();
-        adapter_items = new Adapter_My_Items(this.getContext(), itemsArrayList);
-
-        fragment_RECYC_items.setLayoutManager(new GridLayoutManager(currentActivity, 3));
-        fragment_RECYC_items.setHasFixedSize(true);
-        fragment_RECYC_items.setItemAnimator(new DefaultItemAnimator());
-        fragment_RECYC_items.setAdapter(adapter_items);
+        createRecycler();
 
         itemsArrayChangeListener();
-
-        adapter_items.setItemClickListener(new ItemsClickListener() {
-            @Override
-            public void itemClicked(MyItem item, int position) {
-                DocumentReference docRef = db.collection(Constants.KEY_LISTS).document(currentListUID).collection(Constants.KEY_ITEMS).document(item.getItemUid());
-                docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                    @Override
-                    public void onSuccess(DocumentSnapshot documentSnapshot) {
-                        if (documentSnapshot.exists()) {
-                            Log.d("pttt", "item already in the list");
-                            Snackbar snackbar = Snackbar //TODO Make general method
-                                    .make(fragment_RECYC_items, "מוצר זה קיים ברשימה", Snackbar.LENGTH_LONG);
-                            snackbar.setAnchorView(R.id.toolbar_FAB_add);
-                            snackbar.setBackgroundTint(Color.parseColor("#F9E1DC"));
-                            snackbar.setActionTextColor(Color.RED);
-                            snackbar.show();
-                        } else{
-                            Toast.makeText(getContext(), item.getItemTitle() + "position: " + position, Toast.LENGTH_SHORT).show();
-                            dataManager.setCurrentItem(item);
-                            startActivity(new Intent(currentActivity, EditItemActivity.class));
-                        }
-                    }
-                });
-            }
-        });
-
 
         return view;
     }
@@ -144,6 +109,39 @@ public class CategoryItemsFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
         toolbar_FAB_add.setVisibility(View.VISIBLE);
+    }
+
+    private void createRecycler() {
+        itemsArrayList = new ArrayList<>();
+        adapter_items = new Adapter_My_Items(this.getContext(), itemsArrayList);
+
+        fragment_RECYC_items.setLayoutManager(new GridLayoutManager(currentActivity, 3));
+        fragment_RECYC_items.setHasFixedSize(true);
+        fragment_RECYC_items.setItemAnimator(new DefaultItemAnimator());
+        fragment_RECYC_items.setAdapter(adapter_items);
+
+        adapter_items.setItemClickListener(new ItemsClickListener() {
+            @Override
+            public void itemClicked(MyItem item, int position) {
+                DocumentReference docRef = db.collection(Constants.KEY_LISTS).document(currentListUID).collection(Constants.KEY_ITEMS).document(item.getItemUid());
+                docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    @SuppressLint("Range")
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                        if (documentSnapshot.exists()) {
+                            Log.d("pttt", "Item already in the list");
+                            Snackbar snackbar = Utils.showErrorSnackBar(fragment_RECYC_items, "מוצר זה קיים ברשימה", Snackbar.LENGTH_LONG);
+                            snackbar.setAnchorView(R.id.toolbar_FAB_add);
+                            snackbar.show();
+                        } else{
+                            dataManager.setCurrentItem(item);
+                            startActivity(new Intent(currentActivity, EditItemActivity.class));
+                        }
+                    }
+                });
+            }
+        });
+
     }
 
     private void addItem() {
@@ -165,17 +163,15 @@ public class CategoryItemsFragment extends Fragment {
                 assert value != null;
                 for (DocumentChange dc : value.getDocumentChanges()) {
                     switch (dc.getType()) {
+
                         case ADDED: {
                             MyItem newItem = dc.getDocument().toObject(MyItem.class);
-                            //listRef.update("items_Counter", FieldValue.increment(1));
-
                             itemsArrayList.add(newItem);
-
-
                             Log.d("pttt", "Your Item Added To firebase");
-//                            adapter_my_items.notifyItemInserted(0);
+                            //adapter_items.notifyItemInserted(0);
                             break;
                         }
+
                         case MODIFIED: {
                             MyItem newItem = dc.getDocument().toObject(MyItem.class);
                             for (int i = 0; i < itemsArrayList.size(); i++) {
@@ -187,19 +183,19 @@ public class CategoryItemsFragment extends Fragment {
                             Log.d("pttt", "Your Item Changed in firebase");
                             break;
                         }
+
                         case REMOVED: {
                             MyItem newItem = dc.getDocument().toObject(MyItem.class);
                             for (int i = 0; i < itemsArrayList.size(); i++) {
                                 if (itemsArrayList.get(i).getItemUid().equals(newItem.getItemUid())) {
                                     itemsArrayList.remove(i);
-
-                                    //listRef.update("items_Counter", FieldValue.increment(-1));
                                     //adapter_items.notifyItemRemoved(i);
                                 }
                             }
                             Log.d("pttt", "Your Item Removed From firebase");
                             break;
                         }
+
                         default:
                             break;
                     }
@@ -210,6 +206,5 @@ public class CategoryItemsFragment extends Fragment {
             }
         });
     }
-
 
 }

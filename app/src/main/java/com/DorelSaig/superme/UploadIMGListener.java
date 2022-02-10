@@ -2,7 +2,7 @@ package com.DorelSaig.superme;
 
 import com.DorelSaig.superme.Objects.MyList;
 
-public interface ListListener {
+public interface UploadIMGListener {
 
-    void addNewSharedList(MyList listToAdd);
+    void uploadDone(String theUrl);
 }

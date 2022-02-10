@@ -27,6 +27,8 @@ import com.DorelSaig.superme.Activities.SplashActivity;
 import com.DorelSaig.superme.App;
 import com.google.firebase.messaging.RemoteMessage;
 
+import java.util.Map;
+
 public class FirebaseMessagingService extends com.google.firebase.messaging.FirebaseMessagingService {
 
      NotificationManager mNotificationManager;
@@ -37,21 +39,17 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
         super.onMessageReceived(remoteMessage);
 
 
-// playing audio and vibration when user se reques
-        Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-        Ringtone r = RingtoneManager.getRingtone(getApplicationContext(), notification);
-        r.play();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-            r.setLooping(false);
-        }
+        Map<String, String> data = remoteMessage.getData();
 
-        // vibration
+
+//      vibration when user gets notification
         Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
         long[] pattern = {100, 300, 300, 300};
         v.vibrate(pattern, -1);
 
-
-        int resourceImage = getResources().getIdentifier(remoteMessage.getNotification().getIcon(), "drawable", getPackageName());
+//      get the notification icon
+        //int resourceImage = getResources().getIdentifier(remoteMessage.getNotification().getIcon(), "drawable", getPackageName());
+        int resourceImage = getResources().getIdentifier(data.get("icon"), "drawable", getPackageName());
 
 
 
@@ -67,13 +65,15 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
 
 
         Intent resultIntent = new Intent(this, SplashActivity.class);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 1, resultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 1, resultIntent, PendingIntent.FLAG_IMMUTABLE);
 
 
-        builder.setContentTitle(remoteMessage.getNotification().getTitle());
-        builder.setContentText(remoteMessage.getNotification().getBody());
+//        builder.setContentTitle(remoteMessage.getNotification().getTitle());
+//        builder.setContentText(remoteMessage.getNotification().getBody());
+        builder.setContentTitle(data.get("title"));
+        builder.setContentText(data.get("body"));
         builder.setContentIntent(pendingIntent);
-        builder.setStyle(new NotificationCompat.BigTextStyle().bigText(remoteMessage.getNotification().getBody()));
+        builder.setStyle(new NotificationCompat.BigTextStyle().bigText(data.get("body")));
         builder.setAutoCancel(true);
         builder.setPriority(Notification.PRIORITY_MAX);
 

@@ -104,7 +104,6 @@ public class SplashActivity extends AppCompatActivity {
 
 
     private void animationDone() {
-
         if(FirebaseAuth.getInstance().getCurrentUser() == null){
             Intent intent  = new Intent(this, LoginActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);

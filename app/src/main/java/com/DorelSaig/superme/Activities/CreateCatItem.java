@@ -16,9 +16,12 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.DorelSaig.superme.Firebase.MyDataManager;
+import com.DorelSaig.superme.Misc.Constants;
+import com.DorelSaig.superme.Misc.Utils;
 import com.DorelSaig.superme.Objects.MyItem;
 import com.DorelSaig.superme.Objects.MyUser;
 import com.DorelSaig.superme.R;
+import com.DorelSaig.superme.UploadIMGListener;
 import com.github.dhaval2404.imagepicker.ImagePicker;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -41,6 +44,7 @@ public class CreateCatItem extends AppCompatActivity {
     private final MyDataManager dataManager = MyDataManager.getInstance();
     private final FirebaseFirestore db = dataManager.getDbFireStore();
     private final MyUser currentUser = dataManager.getCurrentUser();
+    private StorageReference storageRef;
 
     private FloatingActionButton createItem_FAB_profile_pic;
     private ShapeableImageView createItem_IMG_user;
@@ -55,17 +59,26 @@ public class CreateCatItem extends AppCompatActivity {
     private MaterialButton createItem_TGBTN_kilo;
 
     private MyItem tempItem;
+    private boolean isSubmit;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_cat_item);
 
+        isSubmit = false;
+
         findViews();
         configEditFields();
         initButtons();
-        Log.d("pttt", "On Create CatItem");
+        Log.d("pttt", "On CreateCatItem");
         tempItem = new MyItem("No Title", 0, dataManager.getCurrentListUid());
+
+        //Reference to the exact path where we want the image to be store in Storage
+        storageRef = dataManager.getStorage()
+                .getReference()
+                .child("system_items_image")
+                .child(tempItem.getItemUid());
     }
 
     private void findViews() {
@@ -119,18 +132,19 @@ public class CreateCatItem extends AppCompatActivity {
                 tempItem.setItemTitle(theTitle);
                 tempItem.setCreatorUid(currentUser.getUid());
 
-
                 storeItemInDB(tempItem);
+                isSubmit = true;
             }
         });
 
         toggleButton.setSingleSelection(true);
+        toggleButton.setSelectionRequired(true);
         createItem_TGBTN_kilo.setChecked(true);
 
         createItem_TGBTN_kilo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(createItem_TGBTN_kilo.isChecked()) {
+                if (createItem_TGBTN_kilo.isChecked()) {
                     createItem_EDT_amount.setSuffixText(getString(R.string.kilos));
                     createItem_EDT_amount.getEditText().setInputType(InputType.TYPE_NUMBER_FLAG_DECIMAL | InputType.TYPE_CLASS_NUMBER);
                 }
@@ -140,12 +154,26 @@ public class CreateCatItem extends AppCompatActivity {
         createItem_TGBTN_ones.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(createItem_TGBTN_ones.isChecked()) {
+                if (createItem_TGBTN_ones.isChecked()) {
                     createItem_EDT_amount.setSuffixText(getString(R.string.ones));
                     createItem_EDT_amount.getEditText().setInputType(InputType.TYPE_CLASS_NUMBER);
                 }
             }
         });
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+        if (!isSubmit) {
+            storageRef.delete().addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Log.d("pttt", "onFailure: " + e.getMessage());
+                }
+            });
+        }
     }
 
     /**
@@ -162,55 +190,81 @@ public class CreateCatItem extends AppCompatActivity {
     }
 
     /**
-     *Results From ImagePicker will be catch here
+     * Results From ImagePicker will be catch here
      * will place the image in the relevant Image View
-     * Right after that, will catch the image bytes back from the view and store them in the Firebase Storage.
+     * Right after that, will catch the image bytes back from the view and update them in the Firebase Storage.
      * After successful upload will update the Object Url Field
+     *
+     * @param requestCode The integer request code originally supplied to startActivityForResult(), allowing you to identify who this result came from.
+     * @param resultCode  The integer result code returned by the child activity through its setResult().
+     * @param data        An Intent, which can return result data to the caller (various data can be attached to Intent "extras").
      */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
+        //View Indicates the process of the image uploading
         createItem_BAR_progress.setVisibility(View.VISIBLE);
         createItem_BTN_create.setEnabled(false);
-        StorageReference userRef = dataManager.getStorage().getReference().child("system_items_image").child(tempItem.getItemUid());
 
-        Uri uri = data.getData();
-        createItem_IMG_user.setImageURI(uri);
-
-        // [START upload_memory]
-        // Get the data from an ImageView as bytes
-        createItem_IMG_user.setDrawingCacheEnabled(true);
-        createItem_IMG_user.buildDrawingCache();
-        Bitmap bitmap = ((BitmapDrawable) createItem_IMG_user.getDrawable()).getBitmap();
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-        byte[] bytes = baos.toByteArray();
-
-
-        UploadTask uploadTask = userRef.putBytes(bytes);
-
-        uploadTask.addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+        UploadIMGListener uploadIMGListener = new UploadIMGListener() {
             @Override
-            public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
-                if (task.isSuccessful()) {
-                    userRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                        @Override
-                        public void onSuccess(Uri uri) {
-                            createItem_BAR_progress.setVisibility(View.INVISIBLE);
-                            createItem_BTN_create.setEnabled(true);
-                            tempItem.setItemImage(uri.toString());
+            public void uploadDone(String theUrl) {
+                //View Indicates the process of the image uploading Done
+                // by removing the progress bar indicator and making the button enabled
+                createItem_BAR_progress.setVisibility(View.INVISIBLE);
+                createItem_BTN_create.setEnabled(true);
 
-                        }
-                    });
-
-
-                } else {
-                    String message = task.getException().getMessage();
-                    Toast.makeText(CreateCatItem.this, "Error: " + message, Toast.LENGTH_SHORT).show();
-                }
+                // Set the image URL to the object we created
+                tempItem.setItemImage(theUrl);
             }
-        });
+        };
+
+        Utils.imageUploading(uploadIMGListener, data, createItem_IMG_user, storageRef, CreateCatItem.this);
+
+        //TODO Erease Comment After final test
+//        //Get URI Data and place it in ImageView
+//        Uri uri = data.getData();
+//        createItem_IMG_user.setImageURI(uri);
+//
+//        // Get the data from an ImageView as bytes
+//        createItem_IMG_user.setDrawingCacheEnabled(true);
+//        createItem_IMG_user.buildDrawingCache();
+//        Bitmap bitmap = ((BitmapDrawable) createItem_IMG_user.getDrawable()).getBitmap();
+//        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+//        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+//        byte[] bytes = baos.toByteArray();
+//
+//
+//
+//        //Start The upload task
+//        UploadTask uploadTask = storageRef.putBytes(bytes);
+//        uploadTask.addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+//            @Override
+//            public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+//                if (task.isSuccessful()) {
+//                    // If upload was successful, We want to get the image url from the storage
+//                    storageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+//                        @Override
+//                        public void onSuccess(Uri uri) {
+//                            //View Indicates the process of the image uploading Done
+//                            // by removing the progress bar indicator and making the button enabled
+//                            createItem_BAR_progress.setVisibility(View.INVISIBLE);
+//                            createItem_BTN_create.setEnabled(true);
+//
+//                            // Set the image URL to the object we created
+//                            tempItem.setItemImage(uri.toString());
+//
+//                        }
+//                    });
+//
+//
+//                } else {
+//                    String message = task.getException().getMessage();
+//                    Toast.makeText(CreateCatItem.this, "Error: " + message, Toast.LENGTH_SHORT).show();
+//                }
+//            }
+//        });
 
     }
 
@@ -220,9 +274,9 @@ public class CreateCatItem extends AppCompatActivity {
      * @param itemToStore is the item you wish to store in the Firebase Firestore
      */
     private void storeItemInDB(@NonNull MyItem itemToStore) {
-        db.collection("categories")
+        db.collection(Constants.KEY_CATEGORIES)
                 .document(dataManager.getCurrentCategoryUid())
-                .collection("items")
+                .collection(Constants.KEY_ITEMS)
                 .document(itemToStore.getItemUid())
                 .set(itemToStore)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -240,9 +294,5 @@ public class CreateCatItem extends AppCompatActivity {
                     }
                 });
     }
-
-
-
-
 
 }

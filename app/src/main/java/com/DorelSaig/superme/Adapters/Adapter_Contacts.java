@@ -7,10 +7,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.DorelSaig.superme.Firebase.MyDataManager;
 import com.DorelSaig.superme.Objects.MyContact;
 import com.DorelSaig.superme.R;
 import com.bumptech.glide.Glide;
@@ -67,6 +69,7 @@ public class Adapter_Contacts extends RecyclerView.Adapter<RecyclerView.ViewHold
 
         private CircleImageView contact_IMG_profile;
         private MaterialTextView contact_LBL_name;
+
 
         public ContactViewHolder(View itemView) {
             super(itemView);

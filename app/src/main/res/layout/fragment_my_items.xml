@@ -18,12 +18,13 @@
             android:id="@+id/fragment_TXT_2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
             android:layout_centerHorizontal="true"
+            android:layout_marginTop="20dp"
+            android:fontFamily="@font/untitled"
             android:text="המוצרים שתמציא, יופיעו פה"
-            android:fontFamily="@font/amatica_sc_bold"
+            android:textColor="@color/black"
             android:textSize="20sp"
-            android:textColor="@color/black"/>
+            android:textStyle="bold|italic" />
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/fragment_IMG_myItemsempty"
@@ -31,7 +32,7 @@
             android:layout_height="200dp"
             android:layout_below="@id/fragment_TXT_2"
             android:layout_centerHorizontal="true"
-            android:src="@drawable/img_empty_cart"/>
+            android:src="@drawable/img_empty_cart" />
 
     </RelativeLayout>
 
@@ -43,7 +44,6 @@
         android:clipToPadding="false"
 
         />
-
 
 
 </FrameLayout>

@@ -5,9 +5,6 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
-import android.net.Uri;
 import android.os.Bundle;
 import android.text.InputFilter;
 import android.text.InputType;
@@ -16,14 +13,15 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.DorelSaig.superme.Firebase.MyDataManager;
+import com.DorelSaig.superme.Misc.Constants;
+import com.DorelSaig.superme.Misc.Utils;
 import com.DorelSaig.superme.Objects.MyItem;
 import com.DorelSaig.superme.Objects.MyUser;
 import com.DorelSaig.superme.R;
+import com.DorelSaig.superme.UploadIMGListener;
 import com.github.dhaval2404.imagepicker.ImagePicker;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.button.MaterialButtonToggleGroup;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -32,16 +30,13 @@ import com.google.android.material.progressindicator.CircularProgressIndicator;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
-
-import java.io.ByteArrayOutputStream;
 
 public class CreateNewItemActivity extends AppCompatActivity {
 
 
-    private MyDataManager U_Manager = MyDataManager.getInstance();
-    private FirebaseFirestore db = U_Manager.getDbFireStore();
-    private MyUser currentUser = U_Manager.getCurrentUser();
+    private final MyDataManager U_Manager = MyDataManager.getInstance();
+    private final FirebaseFirestore db = U_Manager.getDbFireStore();
+    private final MyUser currentUser = U_Manager.getCurrentUser();
 
     private FloatingActionButton createItem_FAB_profile_pic;
     private ShapeableImageView createItem_IMG_user;
@@ -56,7 +51,7 @@ public class CreateNewItemActivity extends AppCompatActivity {
     private MaterialButton createItem_TGBTN_kilo;
 
     private MyItem tempItem;
-    private StorageReference userRef;
+    private StorageReference storageRef;
 
     private boolean isSubmit;
 
@@ -72,21 +67,27 @@ public class CreateNewItemActivity extends AppCompatActivity {
         initButtons();
 
         tempItem = new MyItem("No Title", 0, U_Manager.getCurrentListUid());
-        userRef = U_Manager.getStorage().getReference().child("items_image").child(tempItem.getItemUid());
+
+        //Reference to the exact path where we want the image to be store in Storage
+        storageRef = U_Manager.getStorage()
+                .getReference()
+                .child(Constants.KEY_ITEMS_IMAGE)
+                .child(tempItem.getItemUid());
     }
 
-    @Override
-    protected void onStop() {
-        super.onStop();
+    private void findViews() {
 
-        if(!isSubmit){
-            userRef.delete().addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    Log.d("pttt", "onFailure: "+ e.getMessage());
-                }
-            });
-        }
+        createItem_FAB_profile_pic = findViewById(R.id.createItem_FAB_profile_pic);
+        createItem_IMG_user = findViewById(R.id.createItem_IMG_user);
+        createItem_EDT_title = findViewById(R.id.createItem_EDT_title);
+        createItem_EDT_amount = findViewById(R.id.createItem_EDT_amount);
+        createItem_EDT_notes = findViewById(R.id.createItem_EDT_notes);
+        createItem_BTN_create = findViewById(R.id.createItem_BTN_create);
+        createItem_BAR_progress = findViewById(R.id.createItem_BAR_progress);
+
+        toggleButton = findViewById(R.id.toggleButton);
+        createItem_TGBTN_kilo = findViewById(R.id.createItem_TGBTN_kilo);
+        createItem_TGBTN_ones = findViewById(R.id.createItem_TGBTN_ones);
 
     }
 
@@ -100,108 +101,6 @@ public class CreateNewItemActivity extends AppCompatActivity {
         createItem_EDT_amount.getEditText().setFilters(new InputFilter[]{amountLengthFilter});
         createItem_EDT_title.getEditText().setFilters(new InputFilter[]{titleLengthFilter});
     }
-
-
-    private void choseCover() {
-        ImagePicker.with(CreateNewItemActivity.this)
-                .crop()	    			//Crop image(Optional), Check Customization for more option
-                .compress(1024)			//Final image size will be less than 1 MB(Optional)
-                .crop(2f, 1f)
-                .maxResultSize(1080, 1080)
-                //Final image resolution will be less than 1080 x 1080(Optional)
-                .start();
-    }
-
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        createItem_BAR_progress.setVisibility(View.VISIBLE);
-        createItem_BTN_create.setEnabled(false);
-
-
-        Uri uri = data.getData();
-        createItem_IMG_user.setImageURI(uri);
-
-        // [START upload_memory]
-        // Get the data from an ImageView as bytes
-        createItem_IMG_user.setDrawingCacheEnabled(true);
-        createItem_IMG_user.buildDrawingCache();
-        Bitmap bitmap = ((BitmapDrawable) createItem_IMG_user.getDrawable()).getBitmap();
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-        byte[] bytes = baos.toByteArray();
-
-
-        UploadTask uploadTask = userRef.putBytes(bytes);
-
-        uploadTask.addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
-                if (task.isSuccessful()){
-                    userRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                        @Override
-                        public void onSuccess(Uri uri) {
-                            createItem_BAR_progress.setVisibility(View.INVISIBLE);
-                            createItem_BTN_create.setEnabled(true);
-                            tempItem.setItemImage(uri.toString());
-
-                        }
-                    });
-                } else {
-                    String message = task.getException().getMessage();
-                    Toast.makeText(CreateNewItemActivity.this, "Error: " + message, Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-
-    }
-
-
-    private void storeItemInDB(MyItem itemToStore) {
-        db.collection("lists")
-                .document(U_Manager.getCurrentListUid())
-                .collection("items")
-                .document(itemToStore.getItemUid())
-                .set(itemToStore)
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void unused) {
-                        Log.d("pttt", "DocumentSnapshot Successfully written!");
-                        //startActivity(new Intent(CreateListActivity.this, MainActivity.class));
-                    }
-
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.w("pttt", "Error adding document", e);
-                    }
-                });
-
-        db.collection("users")
-                .document(currentUser.getUid())
-                .collection("myItems")
-                .document(itemToStore.getItemUid())
-                .set(itemToStore)
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void unused) {
-                        Log.d("pttt", "DocumentSnapshot Successfully written!");
-                        //startActivity(new Intent(CreateListActivity.this, MainActivity.class));
-                        finish();
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.w("pttt", "Error adding document", e);
-                    }
-                });
-
-    }
-
 
     private void initButtons() {
         createItem_FAB_profile_pic.setOnClickListener(new View.OnClickListener() {
@@ -228,7 +127,6 @@ public class CreateNewItemActivity extends AppCompatActivity {
                 tempItem.setCreatorUid(currentUser.getUid());
                 tempItem.setNotes(createItem_EDT_notes.getEditText().getText().toString());
 
-
                 storeItemInDB(tempItem);
                 isSubmit = true;
             }
@@ -240,7 +138,7 @@ public class CreateNewItemActivity extends AppCompatActivity {
         createItem_TGBTN_kilo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(createItem_TGBTN_kilo.isChecked()) {
+                if (createItem_TGBTN_kilo.isChecked()) {
                     createItem_EDT_amount.setSuffixText(getString(R.string.kilos));
                     createItem_EDT_amount.getEditText().setInputType(InputType.TYPE_NUMBER_FLAG_DECIMAL | InputType.TYPE_CLASS_NUMBER);
                 }
@@ -250,7 +148,7 @@ public class CreateNewItemActivity extends AppCompatActivity {
         createItem_TGBTN_ones.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(createItem_TGBTN_ones.isChecked()) {
+                if (createItem_TGBTN_ones.isChecked()) {
                     createItem_EDT_amount.setSuffixText(getString(R.string.ones));
                     createItem_EDT_amount.getEditText().setInputType(InputType.TYPE_CLASS_NUMBER);
                 }
@@ -259,19 +157,161 @@ public class CreateNewItemActivity extends AppCompatActivity {
     }
 
 
-    private void findViews() {
+    @Override
+    protected void onStop() {
+        super.onStop();
 
-        createItem_FAB_profile_pic = findViewById(R.id.createItem_FAB_profile_pic);
-        createItem_IMG_user = findViewById(R.id.createItem_IMG_user);
-        createItem_EDT_title = findViewById(R.id.createItem_EDT_title);
-        createItem_EDT_amount = findViewById(R.id.createItem_EDT_amount);
-        createItem_EDT_notes = findViewById(R.id.createItem_EDT_notes);
-        createItem_BTN_create = findViewById(R.id.createItem_BTN_create);
-        createItem_BAR_progress = findViewById(R.id.createItem_BAR_progress);
+        if (!isSubmit) {
+            storageRef.delete().addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Log.d("pttt", "onFailure: " + e.getMessage());
+                }
+            });
+        }
 
-        toggleButton = findViewById(R.id.toggleButton);
-        createItem_TGBTN_kilo = findViewById(R.id.createItem_TGBTN_kilo);
-        createItem_TGBTN_ones = findViewById(R.id.createItem_TGBTN_ones);
     }
 
+    /**
+     * Load ImagePicker activity to choose the category cover
+     */
+    private void choseCover() {
+        ImagePicker.with(CreateNewItemActivity.this)
+                .crop()                    //Crop image(Optional), Check Customization for more option
+                .compress(1024)            //Final image size will be less than 1 MB(Optional)
+                .crop(2f, 1f)
+                .maxResultSize(1080, 1080) //Final image resolution will be less than 1080 x 1080(Optional)
+                .start();
+    }
+
+
+    /**
+     * Results From ImagePicker will be catch here
+     * will place the image in the relevant Image View
+     * Right after that, will catch the image bytes back from the view and update them in the Firebase Storage.
+     * After successful upload will update the Object Url Field
+     *
+     * @param requestCode The integer request code originally supplied to startActivityForResult(), allowing you to identify who this result came from.
+     * @param resultCode  The integer result code returned by the child activity through its setResult().
+     * @param data        An Intent, which can return result data to the caller (various data can be attached to Intent "extras").
+     */
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        //View Indicates the process of the image uploading
+        createItem_BAR_progress.setVisibility(View.VISIBLE);
+        createItem_BTN_create.setEnabled(false);
+
+        UploadIMGListener uploadIMGListener = new UploadIMGListener() {
+            @Override
+            public void uploadDone(String theUrl) {
+                //View Indicates the process of the image uploading Done
+                // by removing the progress bar indicator and making the button enabled
+                createItem_BAR_progress.setVisibility(View.INVISIBLE);
+                createItem_BTN_create.setEnabled(true);
+
+                // Set the image URL to the object we created
+                tempItem.setItemImage(theUrl);
+            }
+        };
+
+
+        if (data != null) {
+            Utils.imageUploading(uploadIMGListener, data, createItem_IMG_user, storageRef, CreateNewItemActivity.this);
+        } else {
+            Toast.makeText(CreateNewItemActivity.this, "Error: Null Data Received", Toast.LENGTH_SHORT).show();
+        }
+
+        //TODO Erease Comment After final test
+//
+//        Uri uri = data.getData();
+//        createItem_IMG_user.setImageURI(uri);
+//
+//        // Get the data from an ImageView as bytes
+//        createItem_IMG_user.setDrawingCacheEnabled(true);
+//        createItem_IMG_user.buildDrawingCache();
+//        Bitmap bitmap = ((BitmapDrawable) createItem_IMG_user.getDrawable()).getBitmap();
+//        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+//        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+//        byte[] bytes = baos.toByteArray();
+//
+//        //Start The upload task
+//        UploadTask uploadTask = userRef.putBytes(bytes);
+//        uploadTask.addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+//            @Override
+//            public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+//                if (task.isSuccessful()){
+//                    // If upload was successful, We want to get the image url from the storage
+//                    userRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+//                        @Override
+//                        public void onSuccess(Uri uri) {
+//                            //View Indicates the process of the image uploading Done
+//                            // by removing the progress bar indicator and making the button enabled
+//                            createItem_BAR_progress.setVisibility(View.INVISIBLE);
+//                            createItem_BTN_create.setEnabled(true);
+//
+//                            // Set the image URL to the object we created
+//                            tempItem.setItemImage(uri.toString());
+//                        }
+//                    });
+//                } else {
+//                    String message = task.getException().getMessage();
+//                    Toast.makeText(CreateNewItemActivity.this, "Error: " + message, Toast.LENGTH_SHORT).show();
+//                }
+//            }
+//        });
+
+    }
+
+    /**
+     * Function will store the given Item in firestore under the user's personal items collection
+     * also, this item will be added to the current list
+     *
+     * @param itemToStore is the item you wish to add to your items collection and to your list
+     */
+    private void storeItemInDB(MyItem itemToStore) {
+
+        //Add the item to the current grocery list
+        db.collection(Constants.KEY_LISTS)
+                .document(U_Manager.getCurrentListUid())
+                .collection(Constants.KEY_ITEMS)
+                .document(itemToStore.getItemUid())
+                .set(itemToStore)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void unused) {
+                        Log.d("pttt", "DocumentSnapshot Successfully written!");
+                        //startActivity(new Intent(CreateListActivity.this, MainActivity.class));
+                    }
+
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w("pttt", "Error adding document", e);
+                    }
+                });
+
+        //Store the item for future use in the "MyItems" Collection
+        db.collection(Constants.KEY_USERS)
+                .document(currentUser.getUid())
+                .collection(Constants.KEY_MY_ITEMS)
+                .document(itemToStore.getItemUid())
+                .set(itemToStore)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void unused) {
+                        Log.d("pttt", "DocumentSnapshot Successfully written!");
+                        //startActivity(new Intent(CreateListActivity.this, MainActivity.class));
+                        finish();
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w("pttt", "Error adding document", e);
+                    }
+                });
+    }
 }

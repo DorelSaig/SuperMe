@@ -7,9 +7,8 @@
     android:layout_height="match_parent"
     android:background="@color/main_background"
     android:layoutDirection="rtl"
-    tools:context=".Fragments.MainMarketFragment"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    >
+    tools:context=".Fragments.MainMarketFragment">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -21,57 +20,53 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="5dp"
-            android:fontFamily="@font/amatica_sc"
-            android:text="הפריטים שלך:"
+            android:fontFamily="@font/untitled"
+            android:text="@string/your_items"
+            android:textColor="@color/main_buttons_on_main_green"
             android:textSize="25sp"
-            android:textStyle="bold"
-            android:textColor="@color/main_buttons_on_main_green" />
+            android:textStyle="bold" />
 
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:cardElevation="10dp"
-            app:cardCornerRadius="8dp">
+            app:cardCornerRadius="8dp"
+            app:cardElevation="10dp">
 
             <FrameLayout
                 android:id="@+id/fragment_LAY_myItems_frame"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/fragback"
-                />
+                android:background="@drawable/fragback" />
 
         </androidx.cardview.widget.CardView>
 
         <com.google.android.material.textview.MaterialTextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:fontFamily="@font/amatica_sc"
-            android:text="חיפוש לפי קטגוריה"
+            android:fontFamily="@font/untitled"
+            android:text="@string/browse_by_cat"
             android:textAlignment="center"
+            android:textColor="@color/main_buttons_on_main_green"
             android:textSize="40sp"
-            android:textStyle="bold"
-            android:textColor="@color/main_buttons_on_main_green"/>
+            android:textStyle="bold" />
 
         <View
             android:layout_width="match_parent"
             android:layout_height="5dp"
-            android:elevation="3dp"
-            android:fadingEdgeLength="5dp"
             android:backgroundTint="@color/main_background"
-            />
+            android:elevation="3dp"
+            android:fadingEdgeLength="5dp" />
 
 
         <FrameLayout
-            android:layout_gravity="center"
             android:id="@+id/fragment_LAY_categories_frame"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_gravity="center"
             android:layout_marginTop="0dp"
             android:layout_marginBottom="-27dp"
-            android:clipToPadding="false"
             android:background="@drawable/fragback5"
-            />
-
+            android:clipToPadding="false" />
 
 
     </LinearLayout>

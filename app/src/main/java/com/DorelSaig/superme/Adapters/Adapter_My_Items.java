@@ -36,7 +36,6 @@ public class Adapter_My_Items extends RecyclerView.Adapter<RecyclerView.ViewHold
     }
 
 
-
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -60,9 +59,6 @@ public class Adapter_My_Items extends RecyclerView.Adapter<RecyclerView.ViewHold
         //itemViewHolder.myItem_IMG_image.setImageURI(Uri.parse(item.getItemImage()));
 
         Log.d("pttt", item.getItemImage());
-
-
-
     }
 
     @Override

@@ -13,36 +13,45 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:layout_margin="10dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="10dp"
+        android:fontFamily="@font/untitled"
         android:text="@string/share"
-        android:fontFamily="@font/amatica_sc_bold"
+        android:textColor="@color/main_buttons_on_main_green"
         android:textSize="40sp"
-        />
+        android:textStyle="bold" />
 
 
     <LinearLayout
         android:id="@+id/addContact_LAY_form"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:orientation="horizontal"
-        android:layout_below="@id/addContact_TXT_headline">
+        android:layout_below="@id/addContact_TXT_headline"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="10dp"
+        android:orientation="horizontal">
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/addContact_EDT_phone"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
             android:layout_margin="3dp"
             android:layout_marginStart="6dp"
-            android:layout_gravity="center_vertical"
-            android:layout_weight="4"
+            android:layout_weight="6"
             android:hint="@string/insert_phone_number"
-            app:placeholderText="@string/example_phone_number"
             android:layoutDirection="ltr"
             android:textColorHint="@color/black"
             app:boxBackgroundColor="#ECE8E8"
             app:boxBackgroundMode="filled"
-            app:boxStrokeColor="@color/main_buttons_yellow">
+            app:boxStrokeColor="@color/main_buttons_yellow"
+            app:errorEnabled="true"
+            app:errorIconDrawable="@drawable/ic_baseline_error_outline"
+            app:startIconDrawable="@drawable/ic_login_phone">
 
 
             <com.google.android.material.textfield.TextInputEditText
@@ -50,8 +59,8 @@
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/rubik"
                 android:inputType="phone"
-                android:textColorHint="#60676161"
                 android:textColor="@color/black"
+                android:textColorHint="#60676161"
                 android:textDirection="ltr"
                 android:textSize="16sp"
                 android:textStyle="bold" />
@@ -60,18 +69,21 @@
         <com.hbb20.CountryCodePicker
             android:id="@+id/addContact_CCP_picker"
             android:layout_width="0dp"
-            android:layout_height="50dp"
-            android:layout_weight="2"
+            android:layout_height="75dp"
             android:layout_gravity="center_vertical"
+            android:layout_weight="3"
+            android:background="#00CDCED1"
             android:elevation="10dp"
-            app:ccp_defaultPhoneCode="972"
-            android:background="#FFFFFF"
-            app:ccp_rememberLastSelection="true"
-            app:ccp_showPhoneCode="true"
             app:ccpDialog_allowSearch="true"
             app:ccpDialog_backgroundColor="@color/main_background"
             app:ccp_countryPreference="IL,US,AU,GB"
-            />
+            app:ccp_defaultPhoneCode="972"
+            app:ccp_rememberLastSelection="true"
+            app:ccp_showArrow="true"
+            app:ccp_showNameCode="false"
+            app:ccp_showPhoneCode="true"
+            app:ccp_textGravity="CENTER"
+            app:ccp_textSize="20sp" />
     </LinearLayout>
 
     <LinearLayout
@@ -119,13 +131,14 @@
 
     </LinearLayout>
 
+
     <com.airbnb.lottie.LottieAnimationView
         android:id="@+id/addContact_LOT_share"
         android:layout_width="250dp"
         android:layout_height="250dp"
+        android:layout_below="@id/addContact_LAY_buttons"
         android:layout_centerInParent="true"
         android:layout_centerHorizontal="true"
-        android:layout_below="@id/addContact_LAY_buttons"
         android:layout_marginTop="80dp"
         app:lottie_autoPlay="true"
         app:lottie_loop="true"

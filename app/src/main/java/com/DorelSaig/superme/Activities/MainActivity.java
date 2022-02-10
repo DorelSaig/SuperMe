@@ -28,9 +28,11 @@ import com.DorelSaig.superme.FCM.FcmNotificationsSender;
 import com.DorelSaig.superme.Firebase.MyDataManager;
 import com.DorelSaig.superme.Fragments.HomeListsFragment;
 import com.DorelSaig.superme.Misc.Constants;
+import com.DorelSaig.superme.Misc.Utils;
 import com.DorelSaig.superme.Objects.MyList;
 import com.DorelSaig.superme.Objects.MyUser;
 import com.DorelSaig.superme.R;
+import com.DorelSaig.superme.UploadIMGListener;
 import com.bumptech.glide.Glide;
 import com.firebase.ui.auth.AuthUI;
 import com.github.dhaval2404.imagepicker.ImagePicker;
@@ -97,10 +99,10 @@ public class MainActivity extends AppCompatActivity {
     private CircularProgressIndicator header_BAR_progress;
 
 
-    private MyDataManager dataManager = MyDataManager.getInstance();
-    private FirebaseFirestore db = dataManager.getDbFireStore();
-    private MyUser currentUser = dataManager.getCurrentUser();
-    private FirebaseDatabase realtimeDB = dataManager.getRealTimeDB();
+    private final MyDataManager dataManager = MyDataManager.getInstance();
+    private final FirebaseFirestore db = dataManager.getDbFireStore();
+    private final MyUser currentUser = dataManager.getCurrentUser();
+    private final FirebaseDatabase realtimeDB = dataManager.getRealTimeDB();
 
     private FragmentContainerView main_FRG_container;
     private FragmentManager fragmentManager;
@@ -111,7 +113,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main_activity);
         setSupportActionBar(panel_AppBar_bottom);
         setSupportActionBar(panel_Toolbar_Top);
-
 
         findViews();
         initButtons();
@@ -139,6 +140,8 @@ public class MainActivity extends AppCompatActivity {
                         .setBottomLeftCorner(CornerFamily.ROUNDED, 60.0F).build()
         );
 
+
+        Log.d("pttt", dataManager.getCurrentUser().toString());
         updateUI();
 
 
@@ -148,10 +151,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-
-
     }
-
 
     private void findViews() {
 
@@ -163,12 +163,10 @@ public class MainActivity extends AppCompatActivity {
         panel_VIEW_message = findViewById(R.id.panel_VIEW_message);
         panel_BTN_chat_back = findViewById(R.id.panel_BTN_chat_back);
 
-
         message_BTN_going_out = findViewById(R.id.message_BTN_going_out);
         message_BTN_list_update = findViewById(R.id.message_BTN_list_update);
         message_BTN_list_close = findViewById(R.id.message_BTN_list_close);
 
-        //main_LST_lists = findViewById(R.id.main_LST_lists);
         main_FRG_container = findViewById(R.id.main_FRG_container);
 
         header = nav_view.getHeaderView(0);
@@ -225,7 +223,6 @@ public class MainActivity extends AppCompatActivity {
         navigation_header_container_FAB_profile_pic.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(MainActivity.this, "profile_picture", Toast.LENGTH_SHORT).show();
                 changePic();
             }
         });
@@ -241,17 +238,15 @@ public class MainActivity extends AppCompatActivity {
             @SuppressLint("NonConstantResourceId")
             @Override
             public boolean onMenuItemClick(MenuItem item) {
-                switch (item.getItemId()) {
-                    case R.id.menu_chat:
-                        if (isUp) {
-                            slideDown(panel_VIEW_message);
-                            toolbar_FAB_add.setVisibility(View.VISIBLE);
-                        } else {
-                            slideUp(panel_VIEW_message);
-                            toolbar_FAB_add.setVisibility(View.INVISIBLE);
-                        }
-                        isUp = !isUp;
-                        break;
+                if (item.getItemId() == R.id.menu_chat) {
+                    if (isUp) {
+                        Utils.slideDown(panel_VIEW_message);
+                        toolbar_FAB_add.setVisibility(View.VISIBLE);
+                    } else {
+                        Utils.slideUp(panel_VIEW_message);
+                        toolbar_FAB_add.setVisibility(View.INVISIBLE);
+                    }
+                    isUp = !isUp;
                 }
                 return false;
             }
@@ -260,7 +255,7 @@ public class MainActivity extends AppCompatActivity {
         panel_BTN_chat_back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                slideDown(panel_VIEW_message);
+                Utils.slideDown(panel_VIEW_message);
                 toolbar_FAB_add.setVisibility(View.VISIBLE);
                 isUp = !isUp;
             }
@@ -276,7 +271,6 @@ public class MainActivity extends AppCompatActivity {
                     public void onSuccess(DocumentSnapshot documentSnapshot) {
                         List<String> tempArr = (List<String>) documentSnapshot.get("sharedWithUidsList");
                         Log.d("pttt", tempArr.toString());
-                        assert tempArr != null;
                         for (String uid : tempArr) {
                             if (!uid.equals(currentUser.getUid())) {
                                 notifyHim(uid, title, message);
@@ -347,7 +341,6 @@ public class MainActivity extends AppCompatActivity {
                 .commit();
 
         //Update the UI with User's info
-
         header_TXT_username.setText(dataManager.getCurrentUser().getName().toString());
 
         StorageReference bring = dataManager.getStorage().getReference().child(dataManager.getCurrentUser().getUid().toString());
@@ -382,11 +375,6 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-
-//    private void createNewList() {
-//        startActivity(new Intent(MainActivity.this, CreateListActivity.class));
-//    }
-
     /**
      * Load ImagePicker activity to choose the new profile picture
      */
@@ -404,6 +392,10 @@ public class MainActivity extends AppCompatActivity {
      * will place the image in the relevant Image View
      * Right after that, will catch the image bytes back from the view and update them in the Firebase Storage.
      * After successful upload will update the Object Url Field
+     *
+     * @param requestCode The integer request code originally supplied to startActivityForResult(), allowing you to identify who this result came from.
+     * @param resultCode  The integer result code returned by the child activity through its setResult().
+     * @param data        An Intent, which can return result data to the caller (various data can be attached to Intent "extras").
      */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
@@ -411,59 +403,89 @@ public class MainActivity extends AppCompatActivity {
 
         header_BAR_progress.setVisibility(View.VISIBLE);
 
-        StorageReference userRef = dataManager.getStorage().getReference().child(Constants.KEY_PROFILE_PICTURES).child(dataManager.getFirebaseAuth().getCurrentUser().getUid());
+        StorageReference storageRef = dataManager.getStorage().getReference().child(Constants.KEY_PROFILE_PICTURES).child(dataManager.getFirebaseAuth().getCurrentUser().getUid());
 
-        Uri uri = data.getData();
-        header_IMG_user.setImageURI(uri);
+//        UploadIMGListener uploadIMGListener = new UploadIMGListener() {
+//            @Override
+//            public void uploadDone(String theUrl) {
+//                // Updates the image URL to the currentUser
+//                currentUser.setProfileImgUrl(theUrl);
+//
+//                // Updates the image URL to the currentUser in the DB
+//                dataManager.getDbFireStore().collection(Constants.KEY_USERS)
+//                        .document(dataManager.getCurrentUser().getUid())
+//                        .update(Constants.FIELD_PROFILE_IMG_URL, theUrl)
+//                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+//                            @Override
+//                            public void onComplete(@NonNull Task<Void> task) {
+//                                if (task.isSuccessful()) {
+//                                    header_BAR_progress.setVisibility(View.INVISIBLE);
+//                                    Toast.makeText(MainActivity.this, "Image Save in Database Successfully...", Toast.LENGTH_SHORT).show();
+//                                } else {
+//                                    String message = task.getException().getMessage();
+//                                    Toast.makeText(MainActivity.this, "Error: " + message, Toast.LENGTH_SHORT).show();
+//                                }
+//                            }
+//                        });
+//            }
+//        };
+//
+//        Utils.imageUploading(uploadIMGListener, data, header_IMG_user, userRef, MainActivity.this);
 
-        // [START upload_memory]
-        // Get the data from an ImageView as bytes
-        header_IMG_user.setDrawingCacheEnabled(true);
-        header_IMG_user.buildDrawingCache();
-        Bitmap bitmap = ((BitmapDrawable) header_IMG_user.getDrawable()).getBitmap();
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-        byte[] bytes = baos.toByteArray();
+        if (data != null) {
+            Uri uri = data.getData();
 
+            header_IMG_user.setImageURI(uri);
 
-        UploadTask uploadTask = userRef.putBytes(bytes);
+            // Get the data from an ImageView as bytes
+            header_IMG_user.setDrawingCacheEnabled(true);
+            header_IMG_user.buildDrawingCache();
+            Bitmap bitmap = ((BitmapDrawable) header_IMG_user.getDrawable()).getBitmap();
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+            byte[] bytes = baos.toByteArray();
 
-        uploadTask.addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
-                if (task.isSuccessful()) {
-                    userRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                        @Override
-                        public void onSuccess(Uri uri) {
+            //Start The upload task
+            UploadTask uploadTask = storageRef.putBytes(bytes);
+            uploadTask.addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+                    if (task.isSuccessful()) {
+                        // If upload was successful, We want to get the image url from the storage
+                        storageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                            @Override
+                            public void onSuccess(Uri uri) {
 
-                            currentUser.setProfileImgUrl(uri.toString());
-                            dataManager.getDbFireStore().collection(Constants.KEY_USERS)
-                                    .document(dataManager.getCurrentUser().getUid())
-                                    .update("profileImgUrl", uri.toString())
-                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                        @Override
-                                        public void onComplete(@NonNull Task<Void> task) {
-                                            if (task.isSuccessful()) {
+                                currentUser.setProfileImgUrl(uri.toString());
+                                dataManager.getDbFireStore().collection(Constants.KEY_USERS)
+                                        .document(dataManager.getCurrentUser().getUid())
+                                        .update(Constants.FIELD_PROFILE_IMG_URL, uri.toString())
+                                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<Void> task) {
+                                                if (task.isSuccessful()) {
 
-                                                Toast.makeText(MainActivity.this, "Image Save in Database Successfully...", Toast.LENGTH_SHORT).show();
-                                            } else {
-                                                String message = task.getException().getMessage();
-                                                Toast.makeText(MainActivity.this, "Error: " + message, Toast.LENGTH_SHORT).show();
+                                                    Toast.makeText(MainActivity.this, "Image Save in Database Successfully...", Toast.LENGTH_SHORT).show();
+                                                } else {
+                                                    String message = task.getException().getMessage();
+                                                    Toast.makeText(MainActivity.this, "Error: " + message, Toast.LENGTH_SHORT).show();
+                                                }
                                             }
-                                        }
-                                    });
-                        }
-                    });
+                                        });
+                            }
+                        });
 
-                    header_BAR_progress.setVisibility(View.INVISIBLE);
+                        header_BAR_progress.setVisibility(View.INVISIBLE);
 
-                } else {
-                    String message = task.getException().getMessage();
-                    Toast.makeText(MainActivity.this, "Error: " + message, Toast.LENGTH_SHORT).show();
+                    } else {
+                        String message = task.getException().getMessage();
+                        Toast.makeText(MainActivity.this, "Error: " + message, Toast.LENGTH_SHORT).show();
+                    }
                 }
-            }
-        });
-
+            });
+        } else {
+            Toast.makeText(MainActivity.this, "Error: Null Data Received", Toast.LENGTH_SHORT).show();
+        }
         // [END upload_memory]
     }
 
@@ -488,41 +510,10 @@ public class MainActivity extends AppCompatActivity {
      */
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId()) {
-
-            case R.id.menu_chat:
-                Toast.makeText(this, "chat Click", Toast.LENGTH_SHORT).show();
-                break;
-
+        if (item.getItemId() == R.id.menu_chat) {
+            Toast.makeText(this, "chat Click", Toast.LENGTH_SHORT).show();
         }
         return super.onOptionsItemSelected(item);
     }
-
-    //TODO Util function
-    // slide the view from below itself to the current position
-    public void slideUp(View view) {
-        //view.setVisibility(View.VISIBLE);
-        TranslateAnimation animate = new TranslateAnimation(
-                0,                 // fromXDelta
-                0,                 // toXDelta
-                view.getHeight(),  // fromYDelta
-                0);                // toYDelta
-        animate.setDuration(500);
-        animate.setFillAfter(true);
-        view.startAnimation(animate);
-    }
-
-    public void slideDown(View view) {
-        TranslateAnimation animate = new TranslateAnimation(
-                0,                 // fromXDelta
-                0,                 // toXDelta
-                0,                 // fromYDelta
-                view.getHeight()); // toYDelta
-        animate.setDuration(500);
-        animate.setFillEnabled(false);
-        view.startAnimation(animate);
-
-    }
-
 
 }

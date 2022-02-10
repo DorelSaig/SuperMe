@@ -21,6 +21,7 @@ import android.widget.Toast;
 import com.DorelSaig.superme.Adapters.Adapter_My_Items;
 import com.DorelSaig.superme.Firebase.MyDataManager;
 import com.DorelSaig.superme.ItemsClickListener;
+import com.DorelSaig.superme.Misc.Constants;
 import com.DorelSaig.superme.Objects.MyItem;
 import com.DorelSaig.superme.Objects.MyUser;
 import com.DorelSaig.superme.R;
@@ -76,26 +77,16 @@ public class MyItemsFragment extends Fragment {
 
         currentListUID = dataManager.getCurrentListUid();
 
+        findViews(view);
 
-        fragment_RECYC_myItems = view.findViewById(R.id.fragment_RECYC_myItems);
-        fragment_LAY_myItems_empty = view.findViewById(R.id.fragment_LAY_myItems_empty);
-
-        myItemsArrayList = new ArrayList<>();
-        adapter_my_items = new Adapter_My_Items(this.getContext(), myItemsArrayList);
-
-
-        fragment_RECYC_myItems.setLayoutManager(new GridLayoutManager(currentActivity, 3));
-        fragment_RECYC_myItems.setHasFixedSize(true);
-        fragment_RECYC_myItems.setItemAnimator(new DefaultItemAnimator());
-        fragment_RECYC_myItems.setAdapter(adapter_my_items);
-
+        createRecycler();
         itemsArrayChangeListener();
 
         adapter_my_items.setItemClickListener(new ItemsClickListener() {
             @Override
             public void itemClicked(MyItem item, int position) {
                 Toast.makeText(getContext(), item.getItemTitle() + "position: " + position, Toast.LENGTH_SHORT).show();
-                DocumentReference docRef = db.collection(getString(R.string.key_lists)).document(currentListUID).collection(getString(R.string.key_items)).document(item.getItemUid());
+                DocumentReference docRef = db.collection(Constants.KEY_LISTS).document(currentListUID).collection(Constants.KEY_ITEMS).document(item.getItemUid());
                 docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                     @Override
                     public void onSuccess(DocumentSnapshot documentSnapshot) {
@@ -133,10 +124,29 @@ public class MyItemsFragment extends Fragment {
     }
 
 
+
+    private void findViews(View view) {
+        fragment_RECYC_myItems = view.findViewById(R.id.fragment_RECYC_myItems);
+        fragment_LAY_myItems_empty = view.findViewById(R.id.fragment_LAY_myItems_empty);
+    }
+
+    private void createRecycler() {
+        myItemsArrayList = new ArrayList<>();
+        adapter_my_items = new Adapter_My_Items(this.getContext(), myItemsArrayList);
+
+        fragment_RECYC_myItems.setLayoutManager(new GridLayoutManager(currentActivity, 3));
+        fragment_RECYC_myItems.setHasFixedSize(true);
+        fragment_RECYC_myItems.setItemAnimator(new DefaultItemAnimator());
+        fragment_RECYC_myItems.setAdapter(adapter_my_items);
+    }
+
+    /**
+     * Listen and triggers operation whenever an item in myItems List - Gets new item added, modified or removed in firebase
+     */
     private void itemsArrayChangeListener() {
 
-        db.collection(getString(R.string.key_users)).document(currentUser.getUid())
-                .collection("myItems").addSnapshotListener(new EventListener<QuerySnapshot>() {
+        db.collection(Constants.KEY_USERS).document(currentUser.getUid())
+                .collection(Constants.KEY_MY_ITEMS).addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
                 if (error != null) {
@@ -149,7 +159,6 @@ public class MyItemsFragment extends Fragment {
                     switch (dc.getType()) {
                         case ADDED: {
                             MyItem newItem = dc.getDocument().toObject(MyItem.class);
-                            //listRef.update("items_Counter", FieldValue.increment(1));
                             if (myItemsArrayList.isEmpty())
                                 fragment_LAY_myItems_empty.setVisibility(View.INVISIBLE);
                             myItemsArrayList.add(newItem);
@@ -177,7 +186,6 @@ public class MyItemsFragment extends Fragment {
                                     myItemsArrayList.remove(i);
                                     if (myItemsArrayList.isEmpty())
                                         fragment_LAY_myItems_empty.setVisibility(View.VISIBLE);
-                                    //listRef.update("items_Counter", FieldValue.increment(-1));
                                     //adapter_items.notifyItemRemoved(i);
                                 }
                             }

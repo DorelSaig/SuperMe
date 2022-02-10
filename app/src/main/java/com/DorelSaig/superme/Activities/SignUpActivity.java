@@ -39,14 +39,16 @@ public class SignUpActivity extends AppCompatActivity {
 
     private MaterialButton panel_BTN_update;
     private TextInputLayout form_EDT_name;
-    private MyDataManager dataManager;
-    private FirebaseFirestore db;
-    private FirebaseDatabase realtimeDB;
+    private final MyDataManager dataManager = MyDataManager.getInstance();
+    private final FirebaseFirestore db = dataManager.getDbFireStore();
+    private final FirebaseDatabase realtimeDB = dataManager.getRealTimeDB();
 
     //Profile Picture
     private FloatingActionButton signup_FAB_profile_pic;
     private CircleImageView signup_IMG_user;
 
+
+    private MyUser tempMyUser;
     private String myDownloadUri;
 
     private boolean isSubmit = false;
@@ -59,9 +61,6 @@ public class SignUpActivity extends AppCompatActivity {
         findViews();
         initButtons();
 
-        dataManager = MyDataManager.getInstance();
-        db = dataManager.getDbFireStore();
-        realtimeDB = dataManager.getRealTimeDB();
 
     }
 
@@ -85,6 +84,7 @@ public class SignUpActivity extends AppCompatActivity {
 
         signup_IMG_user = findViewById(R.id.signup_IMG_user);
         signup_FAB_profile_pic = findViewById(R.id.signup_FAB_profile_pic);
+
     }
 
     private void initButtons() {
@@ -95,8 +95,12 @@ public class SignUpActivity extends AppCompatActivity {
                 String userName = form_EDT_name.getEditText().getText().toString();
                 String userID = dataManager.getFirebaseAuth().getCurrentUser().getUid();
                 String userPhone = dataManager.getFirebaseAuth().getCurrentUser().getPhoneNumber();
-                MyUser tempMyUser = new MyUser(userID, userName, userPhone);
-                tempMyUser.setProfileImgUrl(myDownloadUri);
+                tempMyUser = new MyUser(userID, userName, userPhone);
+
+                if(myDownloadUri != null){
+                    tempMyUser.setProfileImgUrl(myDownloadUri);
+                }
+
                 dataManager.setCurrentUser(tempMyUser);
                 storeUserInDB(tempMyUser);
                 isSubmit = true;
@@ -106,32 +110,56 @@ public class SignUpActivity extends AppCompatActivity {
         signup_IMG_user.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                panel_BTN_update.setEnabled(false);
-                ImagePicker.with(SignUpActivity.this)
-                        .crop(1f, 1f)	    			//Crop image(Optional)
-                        .compress(1024)			//Final image size will be less than 1 MB
-                        .maxResultSize(1080, 1080)	//Final image resolution will be less than 1080 x 1080
-                        .start();
+                choseCover();
+            }
+        });
+
+        signup_FAB_profile_pic.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                choseCover();
             }
         });
 
     }
 
 
+    /**
+     * Load ImagePicker activity to choose the category cover
+     */
+    private void choseCover() {
+        ImagePicker.with(SignUpActivity.this)
+                .compress(1024)			//Final image size will be less than 1 MB(Optional)
+                .crop(1f, 1f)
+                .maxResultSize(1080, 1080)
+                //Final image resolution will be less than 1080 x 1080(Optional)
+                .start();
+    }
+
+    /**
+     *Results From ImagePicker will be catch here
+     * will place the image in the relevant Image View
+     * Right after that, will catch the image bytes back from the view and store them in the Firebase Storage.
+     * After successful upload will update the Object Url Field
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
+        //View Indicates the process of the image uploading by Disabling the button
+        panel_BTN_update.setEnabled(false);
+
+        //Reference to the exact path where we want the image to be store in Storage
         StorageReference userRef = dataManager.getStorage()
                 .getReference()
                 .child(Constants.KEY_PROFILE_PICTURES)
                 .child(dataManager.getFirebaseAuth().getCurrentUser().getUid());
 
+        //Get URI Data and place it in ImageView
         Uri uri = data.getData();
-
         signup_IMG_user.setImageURI(uri);
-        // [START upload_memory]
-        // Get the data from an ImageView as bytes
+
+        //Get the data from an ImageView as bytes
         signup_IMG_user.setDrawingCacheEnabled(true);
         signup_IMG_user.buildDrawingCache();
         Bitmap bitmap = ((BitmapDrawable) signup_IMG_user.getDrawable()).getBitmap();
@@ -139,53 +167,49 @@ public class SignUpActivity extends AppCompatActivity {
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
         byte[] bytes = baos.toByteArray();
 
+        //Start The upload task
         UploadTask uploadTask = userRef.putBytes(bytes);
-        uploadTask.addOnFailureListener(new OnFailureListener() {
+        uploadTask.addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
             @Override
-            public void onFailure(@NonNull Exception exception) {
-                // Handle unsuccessful uploads
-            }
-        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-            @Override
-            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                // taskSnapshot.getMetadata() contains file metadata such as size, content-type, etc.
-                // ...
-                userRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                    @Override
-                    public void onSuccess(Uri uri) {
-                        myDownloadUri = uri.toString();
-                        panel_BTN_update.setEnabled(true);
-                    }
-                });
+            public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+                if (task.isSuccessful()) {
+                    //If upload was successful, We want to get the image url from the storage
+                    userRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                        @Override
+                        public void onSuccess(Uri uri) {
+                            //Set the profile URL to the object we created
+                            myDownloadUri = uri.toString();
 
+
+                            //View Indicates the process of the image uploading Done by making the button Enabled
+                            panel_BTN_update.setEnabled(true);
+                        }
+                    });
+                }
             }
         });
-        // [END upload_memory]
+
     }
 
     /**
      * Store User in Database
+     *
      * @param userToStore the user of type MyUser you wish to store in DB
      */
     private void storeUserInDB(MyUser userToStore) {
-        db.collection(Constants.KEY_PHONE_TO_UID).document(userToStore.getPhoneNumber()).set(userToStore.getUid()).addOnCompleteListener(new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
 
-            }
-        });
-
-        //Future proof - option to use realtime DB instead of Firestore DB
-        DatabaseReference myRef = realtimeDB.getReference("PhoneUID").child(userToStore.getPhoneNumber());
+        //Store the user UID by Phone number
+        DatabaseReference myRef = realtimeDB.getReference(Constants.KEY_PHONE_TO_UID).child(userToStore.getPhoneNumber());
         myRef.get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DataSnapshot> task) {
-                if(task.isSuccessful()){
+                if (task.isSuccessful()) {
                     myRef.setValue(userToStore.getUid());
                 }
             }
         });
 
+        //Store the user in Firestore by UID when stored successfully move to Main Activity
         db.collection(Constants.KEY_USERS)
                 .document(userToStore.getUid())
                 .set(userToStore)
@@ -205,6 +229,4 @@ public class SignUpActivity extends AppCompatActivity {
                     }
                 });
     }
-
-
 }

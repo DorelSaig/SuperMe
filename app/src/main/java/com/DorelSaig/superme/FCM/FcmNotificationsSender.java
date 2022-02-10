@@ -54,7 +54,7 @@ public class FcmNotificationsSender  {
 
 
 
-            mainObj.put("notification", notiObject);
+            mainObj.put("data", notiObject);
 
 
             JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, postUrl, mainObj, new Response.Listener<JSONObject>() {

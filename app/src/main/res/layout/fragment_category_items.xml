@@ -12,8 +12,6 @@
         android:layout_height="match_parent"
         android:layout_marginBottom="15dp"
         android:clipToPadding="false"
-        android:paddingBottom="65dp"
-
-        />
+        android:paddingBottom="65dp" />
 
 </FrameLayout>
