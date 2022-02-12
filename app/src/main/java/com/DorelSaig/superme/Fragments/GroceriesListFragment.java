@@ -1,9 +1,7 @@
 package com.DorelSaig.superme.Fragments;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -23,19 +21,17 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
-import android.widget.Toast;
 
 import com.DorelSaig.superme.Activities.EditItemActivity;
 import com.DorelSaig.superme.Activities.ShareListActivity;
 import com.DorelSaig.superme.Adapters.Adapter_Items;
 import com.DorelSaig.superme.Firebase.MyDataManager;
-import com.DorelSaig.superme.ItemsClickListener;
+import com.DorelSaig.superme.Listeners.ItemsClickListener;
 import com.DorelSaig.superme.Misc.Constants;
 import com.DorelSaig.superme.Misc.Utils;
 import com.DorelSaig.superme.Objects.MyItem;
-import com.DorelSaig.superme.Objects.MyUser;
 import com.DorelSaig.superme.R;
-import com.DorelSaig.superme.SwipeToDeleteCallback;
+import com.DorelSaig.superme.Listeners.SwipeToDeleteCallback;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;

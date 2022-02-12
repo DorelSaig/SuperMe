@@ -1,7 +1,6 @@
 package com.DorelSaig.superme.Fragments;
 
 import android.app.Activity;
-import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -20,7 +19,7 @@ import android.widget.Toast;
 
 import com.DorelSaig.superme.Adapters.Adapter_My_Items;
 import com.DorelSaig.superme.Firebase.MyDataManager;
-import com.DorelSaig.superme.ItemsClickListener;
+import com.DorelSaig.superme.Listeners.ItemsClickListener;
 import com.DorelSaig.superme.Misc.Constants;
 import com.DorelSaig.superme.Misc.Utils;
 import com.DorelSaig.superme.Objects.MyItem;

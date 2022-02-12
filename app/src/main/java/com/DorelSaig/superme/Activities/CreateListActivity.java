@@ -16,7 +16,7 @@ import com.DorelSaig.superme.Misc.Utils;
 import com.DorelSaig.superme.Objects.MyList;
 import com.DorelSaig.superme.Objects.MyUser;
 import com.DorelSaig.superme.R;
-import com.DorelSaig.superme.UploadIMGListener;
+import com.DorelSaig.superme.Listeners.UploadIMGListener;
 import com.github.dhaval2404.imagepicker.ImagePicker;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;

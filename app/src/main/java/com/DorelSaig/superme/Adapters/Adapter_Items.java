@@ -10,7 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatImageView;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.DorelSaig.superme.ItemsClickListener;
+import com.DorelSaig.superme.Listeners.ItemsClickListener;
 import com.DorelSaig.superme.Objects.MyItem;
 import com.DorelSaig.superme.R;
 import com.bumptech.glide.Glide;

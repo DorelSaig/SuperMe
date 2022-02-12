@@ -15,11 +15,10 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.DorelSaig.superme.Adapters.Adapter_My_Categories;
-import com.DorelSaig.superme.CategoryClickListener;
+import com.DorelSaig.superme.Listeners.CategoryClickListener;
 import com.DorelSaig.superme.Firebase.MyDataManager;
 import com.DorelSaig.superme.Misc.Constants;
 import com.DorelSaig.superme.Objects.MyCategory;
-import com.DorelSaig.superme.Objects.MyUser;
 import com.DorelSaig.superme.R;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.firebase.firestore.DocumentChange;

@@ -1,4 +1,4 @@
-package com.DorelSaig.superme;
+package com.DorelSaig.superme.Listeners;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -17,6 +17,8 @@ import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.DorelSaig.superme.R;
 
 abstract public class SwipeToDeleteCallback extends ItemTouchHelper.Callback{
 

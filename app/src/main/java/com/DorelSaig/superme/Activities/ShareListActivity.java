@@ -36,7 +36,7 @@ import com.DorelSaig.superme.Misc.Utils;
 import com.DorelSaig.superme.Objects.MyContact;
 import com.DorelSaig.superme.Objects.MyUser;
 import com.DorelSaig.superme.R;
-import com.DorelSaig.superme.SwipeToDeleteCallback;
+import com.DorelSaig.superme.Listeners.SwipeToDeleteCallback;
 import com.airbnb.lottie.LottieAnimationView;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;

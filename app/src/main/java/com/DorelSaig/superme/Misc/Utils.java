@@ -10,10 +10,9 @@ import android.view.View;
 import android.view.animation.TranslateAnimation;
 import android.widget.Toast;
 
-import androidx.annotation.IntRange;
 import androidx.annotation.NonNull;
 
-import com.DorelSaig.superme.UploadIMGListener;
+import com.DorelSaig.superme.Listeners.UploadIMGListener;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
