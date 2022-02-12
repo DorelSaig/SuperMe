@@ -19,7 +19,7 @@ public class MyItem {
         this.itemUid = UUID.randomUUID().toString();
         this.itemTitle = itemTitle;
         this.amount = amount;
-        this.itemImage = itemImage; //Todo put default image
+        this.itemImage = "https://firebasestorage.googleapis.com/v0/b/superme-e69d5.appspot.com/o/images%2Fimg_default_list_cover.jpg?alt=media&token=60b8db0a-91fd-4a10-9bc3-47418f158da1";
         this.creatorUid = creatorUid;
     }
 

@@ -139,10 +139,17 @@ public class EditItemActivity extends AppCompatActivity {
         editItem_BTN_create.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                tempItem.setAmount(Float.parseFloat(editItem_EDT_amount.getEditText().getText().toString()));
+                if (!editItem_EDT_amount.getEditText().getText().toString().isEmpty()) {
+                    tempItem.setAmount(Float.parseFloat(editItem_EDT_amount.getEditText().getText().toString()));
+                } else {
+                    tempItem.setAmount(0);
+                }
                 tempItem.setAmountSuffix(editItem_EDT_amount.getSuffixText().toString());
                 tempItem.setCreatorUid("System");
-                tempItem.setNotes(editItem_EDT_notes.getEditText().getText().toString());
+                if (editItem_EDT_notes.getEditText().getText().toString().isEmpty()) {
+                    tempItem.setNotes("");
+                } else
+                    tempItem.setNotes(editItem_EDT_notes.getEditText().getText().toString());
 
 
                 storeItemInDB(tempItem);
@@ -222,46 +229,6 @@ public class EditItemActivity extends AppCompatActivity {
         } else {
             Toast.makeText(EditItemActivity.this, "Error: Null Data Received", Toast.LENGTH_SHORT).show();
         }
-
-        //TODO Erease Comment After final test
-//        Uri uri = data.getData();
-//        editItem_IMG_user.setImageURI(uri);
-//
-//        // [START upload_memory]
-//        // Get the data from an ImageView as bytes
-//        editItem_IMG_user.setDrawingCacheEnabled(true);
-//        editItem_IMG_user.buildDrawingCache();
-//        Bitmap bitmap = ((BitmapDrawable) editItem_IMG_user.getDrawable()).getBitmap();
-//        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-//        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-//        byte[] bytes = baos.toByteArray();
-//
-//
-//        UploadTask uploadTask = storageRef.putBytes(bytes);
-//
-//        uploadTask.addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
-//            @Override
-//            public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
-//                if (task.isSuccessful()){
-//                    storageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-//                        @Override
-//                        public void onSuccess(Uri uri) {
-//                            editItem_BAR_progress.setVisibility(View.INVISIBLE);
-//                            editItem_BTN_create.setEnabled(true);
-//                            tempItem.setItemImage(uri.toString());
-//
-//                        }
-//                    });
-//
-//
-//
-//                } else {
-//                    String message = task.getException().getMessage();
-//                    Toast.makeText(EditItemActivity.this, "Error: " + message, Toast.LENGTH_SHORT).show();
-//                }
-//            }
-//        });
-
     }
 
     /**

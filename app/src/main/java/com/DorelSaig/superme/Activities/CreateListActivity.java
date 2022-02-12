@@ -38,7 +38,6 @@ public class CreateListActivity extends AppCompatActivity {
 
     private final MyDataManager dataManager = MyDataManager.getInstance();
     private final FirebaseFirestore db = dataManager.getDbFireStore();
-    ;
     private final MyUser currentUser = MyDataManager.getInstance().getCurrentUser();
 
     private MyList tempList;
@@ -168,44 +167,6 @@ public class CreateListActivity extends AppCompatActivity {
         } else {
             Toast.makeText(CreateListActivity.this, "Error: Null Data Received", Toast.LENGTH_SHORT).show();
         }
-
-        //TODO Erease Comment After final test
-//        Uri uri = data.getData();
-//        createList_IMG_user.setImageURI(uri);
-//
-//        // [START upload_memory]
-//        // Get the data from an ImageView as bytes
-//        createList_IMG_user.setDrawingCacheEnabled(true);
-//        createList_IMG_user.buildDrawingCache();
-//        Bitmap bitmap = ((BitmapDrawable) createList_IMG_user.getDrawable()).getBitmap();
-//        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-//        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-//        byte[] bytes = baos.toByteArray();
-//
-//        UploadTask uploadTask = storageRef.putBytes(bytes);
-//
-//        uploadTask.addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
-//            @Override
-//            public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
-//                if (task.isSuccessful()){
-//                    storageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-//                        @Override
-//                        public void onSuccess(Uri uri) {
-//                            createList_BAR_progress.setVisibility(View.INVISIBLE);
-//                            panel_BTN_create.setEnabled(true);
-//                            tempList.setImage_cover(uri.toString());
-//
-//                        }
-//                    });
-//
-//                } else {
-//                    String message = task.getException().getMessage();
-//                    Toast.makeText(CreateListActivity.this, "Error: " + message, Toast.LENGTH_SHORT).show();
-//                }
-//            }
-//        });
-//
-//        // [END upload_memory]
     }
 
     /**

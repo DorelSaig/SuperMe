@@ -172,56 +172,6 @@ public class CreateCategoryActivity extends AppCompatActivity {
         } else {
             Toast.makeText(CreateCategoryActivity.this, "Error: Null Data Received", Toast.LENGTH_SHORT).show();
         }
-
-        //TODO Erease Comment After final test
-//        //Get URI Data and place it in ImageView
-//        Uri uri = data.getData();
-//        createList_IMG_user.setImageURI(uri);
-//
-//        // Get the data from an ImageView as bytes
-//        createList_IMG_user.setDrawingCacheEnabled(true);
-//        createList_IMG_user.buildDrawingCache();
-//        Bitmap bitmap = ((BitmapDrawable) createList_IMG_user.getDrawable()).getBitmap();
-//        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-//        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-//        byte[] bytes = baos.toByteArray();
-//
-//        //Reference to the exact path where we want the image to be store in Storage
-//        StorageReference userRef = dataManager.getStorage()
-//                .getReference()
-//                .child(Constants.KEY_CATEGORY_COVERS)
-//                .child(tempCategory.getCatUid());
-//
-//        //Start The upload task
-//        UploadTask uploadTask = userRef.putBytes(bytes);
-//        uploadTask.addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
-//            @Override
-//            public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
-//                if (task.isSuccessful()){
-//                    // If upload was successful, We want to get the image url from the storage
-//                    userRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-//                        @Override
-//                        public void onSuccess(Uri uri) {
-//                            //View Indicates the process of the image uploading Done
-//                            // by removing the progress bar indicator and making the button enabled
-//                            createList_BAR_progress.setVisibility(View.INVISIBLE);
-//                            panel_BTN_create.setEnabled(true);
-//
-//                            // Set the cover URL to the object we created
-//                            tempCategory.setCat_cover(uri.toString());
-//
-//                        }
-//                    });
-//
-//
-//
-//                } else {
-//                    String message = task.getException().getMessage();
-//                    Toast.makeText(CreateCategoryActivity.this, "Error: " + message, Toast.LENGTH_SHORT).show();
-//                }
-//            }
-//        });
-
     }
 
     /**

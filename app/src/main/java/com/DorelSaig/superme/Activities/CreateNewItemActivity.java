@@ -122,7 +122,11 @@ public class CreateNewItemActivity extends AppCompatActivity {
             public void onClick(View v) {
                 String theTitle = createItem_EDT_title.getEditText().getText().toString();
                 tempItem.setItemTitle(theTitle);
-                tempItem.setAmount(Float.parseFloat(createItem_EDT_amount.getEditText().getText().toString()));
+                if (!createItem_EDT_amount.getEditText().getText().toString().isEmpty()) {
+                    tempItem.setAmount(Float.parseFloat(createItem_EDT_amount.getEditText().getText().toString()));
+                } else {
+                    tempItem.setAmount(0);
+                }
                 tempItem.setAmountSuffix(createItem_EDT_amount.getSuffixText().toString());
                 tempItem.setCreatorUid(currentUser.getUid());
                 tempItem.setNotes(createItem_EDT_notes.getEditText().getText().toString());
@@ -222,46 +226,6 @@ public class CreateNewItemActivity extends AppCompatActivity {
         } else {
             Toast.makeText(CreateNewItemActivity.this, "Error: Null Data Received", Toast.LENGTH_SHORT).show();
         }
-
-        //TODO Erease Comment After final test
-//
-//        Uri uri = data.getData();
-//        createItem_IMG_user.setImageURI(uri);
-//
-//        // Get the data from an ImageView as bytes
-//        createItem_IMG_user.setDrawingCacheEnabled(true);
-//        createItem_IMG_user.buildDrawingCache();
-//        Bitmap bitmap = ((BitmapDrawable) createItem_IMG_user.getDrawable()).getBitmap();
-//        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-//        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-//        byte[] bytes = baos.toByteArray();
-//
-//        //Start The upload task
-//        UploadTask uploadTask = userRef.putBytes(bytes);
-//        uploadTask.addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
-//            @Override
-//            public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
-//                if (task.isSuccessful()){
-//                    // If upload was successful, We want to get the image url from the storage
-//                    userRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-//                        @Override
-//                        public void onSuccess(Uri uri) {
-//                            //View Indicates the process of the image uploading Done
-//                            // by removing the progress bar indicator and making the button enabled
-//                            createItem_BAR_progress.setVisibility(View.INVISIBLE);
-//                            createItem_BTN_create.setEnabled(true);
-//
-//                            // Set the image URL to the object we created
-//                            tempItem.setItemImage(uri.toString());
-//                        }
-//                    });
-//                } else {
-//                    String message = task.getException().getMessage();
-//                    Toast.makeText(CreateNewItemActivity.this, "Error: " + message, Toast.LENGTH_SHORT).show();
-//                }
-//            }
-//        });
-
     }
 
     /**

@@ -19,7 +19,7 @@ public class MyList {
     public MyList(String title, String creatorUid) {
         this.listUid = UUID.randomUUID().toString();
         this.title = title;
-        this.image_cover = image_cover; //Todo put default cover
+        this.image_cover = "https://firebasestorage.googleapis.com/v0/b/superme-e69d5.appspot.com/o/images%2Fimg_default_list_cover.jpg?alt=media&token=60b8db0a-91fd-4a10-9bc3-47418f158da1";
         this.creatorUid = creatorUid;
         this.itemsUid = new ArrayList<>();
         this.sharedWithUidsList = new ArrayList<>();

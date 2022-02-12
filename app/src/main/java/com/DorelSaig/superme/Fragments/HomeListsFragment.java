@@ -24,6 +24,7 @@ import com.DorelSaig.superme.Adapters.Adapter_ShoppingLists;
 import com.DorelSaig.superme.Firebase.MyDataManager;
 import com.DorelSaig.superme.ListItemClickListener;
 import com.DorelSaig.superme.Misc.Constants;
+import com.DorelSaig.superme.Misc.Utils;
 import com.DorelSaig.superme.Objects.MyList;
 import com.DorelSaig.superme.Objects.MyUser;
 import com.DorelSaig.superme.R;
@@ -73,19 +74,17 @@ public class HomeListsFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = LayoutInflater.from(getContext()).inflate(R.layout.fragment_home_lists, container, false);
 
         findViews(view);
 
-        panel_Toolbar_Top.setTitle("הרשימות שלי"); //Todo Strings
+        panel_Toolbar_Top.setTitle(getString(R.string.my_lists));
 
         createRecycler();
         listsArrayChangeListener();
-
-
 
 
         return view;
@@ -114,7 +113,7 @@ public class HomeListsFragment extends Fragment {
                 dataManager.setCurrentListUid(list.getListUid());
                 dataManager.setCurrentListTitle(list.getTitle());
                 dataManager.setCurrentListCreator(list.getCreatorUid());
-               // dataManager.setCurrentList(list);
+                // dataManager.setCurrentList(list);
 
                 getParentFragmentManager()
                         .beginTransaction()
@@ -144,7 +143,19 @@ public class HomeListsFragment extends Fragment {
                         .setPositiveButton("כן", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                removeList(myList);
+                                if (myList.getCreatorUid().equals(currentUser.getUid())) {
+                                    removeList(myList);
+                                } else {
+                                    new MaterialAlertDialogBuilder(currentActivity)
+                                            .setTitle("שגיאה!")
+                                            .setMessage("רק יוצר הרשימה יכול למחוק את הרשימה, אם ברצונך להעלים את הרשימה עלייך לפנות ליוצר")
+                                            .setNeutralButton("קיבלתי", new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(DialogInterface dialog, int which) {
+                                                    dialog.dismiss();
+                                                }
+                                            }).show();
+                                }
                             }
                         })
                         .show();
@@ -157,7 +168,7 @@ public class HomeListsFragment extends Fragment {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 CollectionReference usersCollect = db.collection(Constants.KEY_USERS);
-                for (String uid : myList.getSharedWithUidsList()){
+                for (String uid : myList.getSharedWithUidsList()) {
                     usersCollect.document(uid).update("myListsUids", FieldValue.arrayRemove(myList.getListUid()));
                 }
                 usersCollect.document(myList.getCreatorUid()).update("myListsUids", FieldValue.arrayRemove(myList.getListUid()));
@@ -178,11 +189,10 @@ public class HomeListsFragment extends Fragment {
         toolbar_FAB_add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(currentActivity, "Add From Lists Home",Toast.LENGTH_LONG).show();
+                Toast.makeText(currentActivity, "Add From Lists Home", Toast.LENGTH_LONG).show();
                 startActivity(new Intent(currentActivity, CreateListActivity.class));
             }
         });
-
 
 
     }
@@ -193,80 +203,79 @@ public class HomeListsFragment extends Fragment {
      */
     private void listsArrayChangeListener() {
 
-        CollectionReference collectionReference= db.collection(Constants.KEY_LISTS);
-        listsListener =  collectionReference.addSnapshotListener(new EventListener<QuerySnapshot>() {
-                    @Override
-                    public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
-                        if (currentUser.getMyListsUids().isEmpty()) {
-                            return;
+        CollectionReference collectionReference = db.collection(Constants.KEY_LISTS);
+        listsListener = collectionReference.addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                if (currentUser.getMyListsUids().isEmpty()) {
+                    return;
+                }
+                if (error != null) {
+                    Log.e("FireStore Error", error.getMessage());
+                    return;
+                }
+
+
+                assert value != null;
+                for (DocumentChange dc : value.getDocumentChanges()) {
+                    switch (dc.getType()) {
+                        case ADDED: {
+                            MyList newList = dc.getDocument().toObject(MyList.class);
+                            Log.d("pttt", currentUser.getMyListsUids().toString());
+
+                            if (currentUser.getMyListsUids().contains(newList.getListUid())) {
+                                listsArrayList.add(newList);
+                                Log.d("pttt", "List Added To firebase");
+                            }
+
+                            break;
                         }
-                        if (error != null) {
-                            Log.e("FireStore Error", error.getMessage());
-                            return;
-                        }
-
-
-                        assert value != null;
-                        for (DocumentChange dc : value.getDocumentChanges()) {
-                            switch (dc.getType()) {
-                                case ADDED: {
-                                    MyList newList = dc.getDocument().toObject(MyList.class);
-                                    Log.d("pttt", currentUser.getMyListsUids().toString());
-
-                                    if (currentUser.getMyListsUids().contains(newList.getListUid())) {
-                                        listsArrayList.add(newList);
-                                        Log.d("pttt", "List Added To firebase");
-                                    }
-
-                                    break;
-                                }
-                                case MODIFIED: {
-                                    MyList newList = dc.getDocument().toObject(MyList.class);
-                                    for (int i = 0; i < listsArrayList.size(); i++) {
-                                        if (listsArrayList.get(i).getListUid().equals(newList.getListUid())) {
-                                            listsArrayList.set(i, newList);
-                                            adapter_shoppingLists.notifyItemChanged(i);
-                                            break;
-                                        }
-                                    }
-
-                                    Log.d("pttt", String.valueOf(newList.getSharedWithUidsList().contains(currentUser.getUid())));
-                                    if(newList.getSharedWithUidsList().contains(currentUser.getUid())) {
-                                        if(!listsArrayList.contains(newList)) {
-                                            listsArrayList.add(newList);
-                                        }
-                                    }else {
-                                        if(listsArrayList.contains(newList)){
-                                            listsArrayList.remove(newList);
-                                        }
-                                    }
-                                    Log.d("pttt", "List Changed To firebase");
-                                    break;
-                                }
-                                case REMOVED: {
-                                    MyList newList = dc.getDocument().toObject(MyList.class);
-                                    for (int i = 0; i < listsArrayList.size(); i++) {
-                                        if (listsArrayList.get(i).getListUid().equals(newList.getListUid())) {
-                                            listsArrayList.remove(i);
-                                            adapter_shoppingLists.notifyItemRemoved(i);
-                                            Log.d("pttt", "List Removed To firebase");
-                                            break;
-                                        }
-                                    }
-                                    break;
-                                }
-                                default: {
+                        case MODIFIED: {
+                            MyList newList = dc.getDocument().toObject(MyList.class);
+                            for (int i = 0; i < listsArrayList.size(); i++) {
+                                if (listsArrayList.get(i).getListUid().equals(newList.getListUid())) {
+                                    listsArrayList.set(i, newList);
+                                    adapter_shoppingLists.notifyItemChanged(i);
                                     break;
                                 }
                             }
-                            adapter_shoppingLists.notifyDataSetChanged();
+
+                            Log.d("pttt", String.valueOf(newList.getSharedWithUidsList().contains(currentUser.getUid())));
+                            if (newList.getSharedWithUidsList().contains(currentUser.getUid())) {
+                                if (!listsArrayList.contains(newList)) {
+                                    listsArrayList.add(newList);
+                                }
+                            } else {
+                                if (listsArrayList.contains(newList)) {
+                                    listsArrayList.remove(newList);
+                                }
+                            }
+                            Log.d("pttt", "List Changed To firebase");
+                            break;
+                        }
+                        case REMOVED: {
+                            MyList newList = dc.getDocument().toObject(MyList.class);
+                            for (int i = 0; i < listsArrayList.size(); i++) {
+                                if (listsArrayList.get(i).getListUid().equals(newList.getListUid())) {
+                                    listsArrayList.remove(i);
+                                    adapter_shoppingLists.notifyItemRemoved(i);
+                                    Log.d("pttt", "List Removed To firebase");
+                                    break;
+                                }
+                            }
+                            break;
+                        }
+                        default: {
+                            break;
                         }
                     }
+                    adapter_shoppingLists.notifyDataSetChanged();
+                }
+            }
 
 
-                });
+        });
     }
-
 
 
     @Override

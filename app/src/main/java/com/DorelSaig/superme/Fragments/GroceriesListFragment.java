@@ -89,7 +89,7 @@ public class GroceriesListFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = LayoutInflater.from(getContext()).inflate(R.layout.fragment_groceries_list, container, false);
@@ -200,7 +200,7 @@ public class GroceriesListFragment extends Fragment {
                     fragment_LAY_empty.setVisibility(View.VISIBLE);
                 }
 
-                Snackbar snackbar = Utils.showErrorSnackBar(fragment_LAY_frame, tempItem.getItemTitle() + getString(R.string.removed), Snackbar.LENGTH_SHORT)
+                Snackbar snackbar = Utils.showErrorSnackBar(fragment_LAY_frame, tempItem.getItemTitle() + " " + getString(R.string.removed), Snackbar.LENGTH_SHORT)
                         .setAnchorView(R.id.toolbar_FAB_add)
                         .setAction(getString(R.string.cancel), new View.OnClickListener() {
                             @Override

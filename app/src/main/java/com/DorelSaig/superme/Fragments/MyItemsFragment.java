@@ -22,6 +22,7 @@ import com.DorelSaig.superme.Adapters.Adapter_My_Items;
 import com.DorelSaig.superme.Firebase.MyDataManager;
 import com.DorelSaig.superme.ItemsClickListener;
 import com.DorelSaig.superme.Misc.Constants;
+import com.DorelSaig.superme.Misc.Utils;
 import com.DorelSaig.superme.Objects.MyItem;
 import com.DorelSaig.superme.Objects.MyUser;
 import com.DorelSaig.superme.R;
@@ -70,7 +71,7 @@ public class MyItemsFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = LayoutInflater.from(getContext()).inflate(R.layout.fragment_my_items, container, false);
@@ -92,11 +93,8 @@ public class MyItemsFragment extends Fragment {
                     public void onSuccess(DocumentSnapshot documentSnapshot) {
                         if (documentSnapshot.exists()) {
                             Log.d("pttt", "item already in the list");
-                            Snackbar snackbar = Snackbar //TODO Make general method
-                                    .make(fragment_RECYC_myItems, "מוצר זה קיים ברשימה", Snackbar.LENGTH_LONG);
+                            Snackbar snackbar = Utils.showErrorSnackBar(fragment_RECYC_myItems, "מוצר זה קיים ברשימה", Snackbar.LENGTH_LONG);
                             snackbar.setAnchorView(R.id.toolbar_FAB_add);
-                            snackbar.setBackgroundTint(Color.parseColor("#F9E1DC"));
-                            snackbar.setActionTextColor(Color.RED);
                             snackbar.show();
                         } else {
                             docRef.set(item)

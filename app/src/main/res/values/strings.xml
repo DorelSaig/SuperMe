@@ -28,8 +28,9 @@
     <string name="list_updated">הרשימה עודכנה</string>
     <string name="shopping_done">הקניות בוצעו</string>
 
-
+    <!--    Misc Headlines and Alert Messages-->
     <string name="removed"> הוסר מהרשימה</string>
+    <string name="my_lists">הרשימות שלי</string>
 
     <!--    PlaceHolders-->
     <string name="items_amount">מספר_פריטים</string>
@@ -44,5 +45,7 @@
     <string name="your_items">הפריטים שלך:</string>
     <string name="chat">Chat</string>
     <string name="settings">הגדרות</string>
+
+
 
 </resources>

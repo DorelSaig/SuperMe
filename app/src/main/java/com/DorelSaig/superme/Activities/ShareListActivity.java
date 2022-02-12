@@ -121,9 +121,6 @@ public class ShareListActivity extends AppCompatActivity {
 
         addContact_LOT_share = findViewById(R.id.addContact_LOT_share);
 
-
-
-
     }
 
     private void initButtons() {
@@ -381,7 +378,7 @@ public class ShareListActivity extends AppCompatActivity {
                     addContact_LOT_share.setVisibility(View.VISIBLE);
                 }
 
-                Snackbar snackbar = Utils.showErrorSnackBar(share_RECYC_contacts, contactToRemove.getName() + getString(R.string.removed), Snackbar.LENGTH_LONG)
+                Snackbar snackbar = Utils.showErrorSnackBar(share_RECYC_contacts, contactToRemove.getName() + " " +  getString(R.string.removed), Snackbar.LENGTH_LONG)
                         .setAction(getString(R.string.cancel), new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
@@ -426,7 +423,6 @@ public class ShareListActivity extends AppCompatActivity {
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 DocumentSnapshot documentSnapshot = task.getResult();
                 MyUser theUserToAdd = documentSnapshot.toObject(MyUser.class);
-                theUserToAdd.toString();
                 contact.setName(theUserToAdd.getName()).setPhone(theUserToAdd.getPhoneNumber()).setImgUrl(theUserToAdd.getProfileImgUrl());
 
 
@@ -438,10 +434,9 @@ public class ShareListActivity extends AppCompatActivity {
 
     private boolean checkContactPermission() {
         //Check if conatact Read permission granted
-        boolean result = ContextCompat.checkSelfPermission(
+        return ContextCompat.checkSelfPermission(
                 this,
-                Manifest.permission.READ_CONTACTS) == (PackageManager.PERMISSION_GRANTED);
-        return result; // true if permission granted
+                Manifest.permission.READ_CONTACTS) == (PackageManager.PERMISSION_GRANTED); // true if permission granted
     }
 
     private void requestContactPermission() {
